@@ -1,0 +1,35 @@
+{
+  "name": "frameui-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --port 3100",
+    "build": "next build",
+    "start": "next start --port 3100",
+    "typecheck": "tsc --noEmit",
+    "predev": "pnpm --filter @hwagfu/frameui build && node scripts/gen-examples.mjs",
+    "prebuild": "pnpm --filter @hwagfu/frameui build && node scripts/gen-examples.mjs"
+  },
+  "dependencies": {
+    "@hwagfu/frameui": "workspace:*",
+    "@tanstack/react-table": "^9.2.4",
+    "date-fns": "^4.4.0",
+    "lucide-react": "^1.48.0",
+    "next": "^16.3.6",
+    "react": "^19.3.0",
+    "react-day-picker": "^10.0.1",
+    "react-dom": "^19.3.0",
+    "recharts": "^3.10.1",
+    "server-only": "^0.0.1",
+    "shiki": "^4.4.3",
+    "sonner": "^2.0.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^25.6.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3"
+  }
+}

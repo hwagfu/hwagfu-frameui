@@ -1,0 +1,352 @@
+/*
+ * @hwagfu/frameui — FrameON design tokens.
+ *
+ * Colours use shadcn/ui's variable names (--background, --primary, --accent…)
+ * so every shadcn pattern keeps working, with FrameON's palette behind them.
+ * FrameON-only roles (gold brand, heading, modal surface…) are added on top.
+ *
+ * Re-theme by overriding the variables in `:root` after this import.
+ */
+
+/* Let Tailwind scan the compiled components for class names. */
+@source "./";
+
+/* ------------------------------------------------------------------ *
+ * Palette
+ * ------------------------------------------------------------------ */
+:root {
+  --radius: 0.75rem;
+
+  /* surfaces */
+  --background: #191b24;
+  --foreground: #f1f1f1;
+  --card: #202331;
+  --card-foreground: #f1f1f1;
+  --popover: #191b24;
+  --popover-foreground: #f1f1f1;
+  --modal: #202331;
+  --sunken: #0f111a;
+  --card-nested: #282b3a;
+  --card-layered: #3e435c;
+
+  /* actions */
+  --primary: #8b5cf6;
+  --primary-foreground: #ffffff;
+  --secondary: rgb(170 170 170 / 0.2);
+  --secondary-foreground: #aaaaaa;
+  --brand: #ffd875;
+  --brand-muted: #ffde8a;
+  --brand-foreground: #191b24;
+
+  /* neutral text + fills */
+  --heading: #ffffff;
+  --muted: #2f3346;
+  --muted-foreground: #aaaaaa;
+  --tertiary: #535d8e;
+  /* Menu highlight: nested surface with gold text — FrameON's hover state. */
+  --accent: #282b3a;
+  --accent-foreground: #ffd875;
+
+  /* status */
+  --destructive: #f85f5f;
+  --destructive-foreground: #ffffff;
+  --success: oklch(0.78 0.15 152);
+  --warning: #ffd875;
+  --info: #8b5cf6;
+
+  /* lines + fields */
+  --border: #2f3346;
+  --input: rgb(170 170 170 / 0.3);
+  --field: rgb(255 255 255 / 0.1);
+  --ring: #ffd875;
+
+  /* charts */
+  --chart-1: #8b5cf6;
+  --chart-2: #ffd875;
+  --chart-3: oklch(0.78 0.15 152);
+  --chart-4: oklch(0.76 0.17 55);
+  --chart-5: #f85f5f;
+
+  /* sidebar */
+  --sidebar: #0f111a;
+  --sidebar-foreground: #f1f1f1;
+  --sidebar-primary: #8b5cf6;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #282b3a;
+  --sidebar-accent-foreground: #ffd875;
+  --sidebar-border: #2f3346;
+  --sidebar-ring: #ffd875;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-modal: var(--modal);
+  --color-sunken: var(--sunken);
+  --color-card-nested: var(--card-nested);
+  --color-card-layered: var(--card-layered);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-brand: var(--brand);
+  --color-brand-muted: var(--brand-muted);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-heading: var(--heading);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-tertiary: var(--tertiary);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-field: var(--field);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* FrameON radii: 3 / 4 / 8 / 12 / 16px with the default --radius. */
+  --radius-xs: calc(var(--radius) - 9px);
+  --radius-sm: calc(var(--radius) - 8px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  /* FrameON elevation. raised/elevated/floating equal Tailwind's sm/md/2xl. */
+  --shadow-raised: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-elevated: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-floating: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --shadow-glow: 0 0 15px 0 color-mix(in srgb, var(--brand) 50%, transparent);
+  --shadow-focus: 0 0 8px 0 color-mix(in srgb, var(--brand) 30%, transparent);
+}
+
+@theme {
+  --font-sans:
+    var(--font-be-vietnam, "Be Vietnam Pro"), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  --font-mono: "SF Mono", Monaco, Menlo, monospace;
+
+  /* FrameON type scale — each size carries its line-height (and weight). */
+  --text-display: 32px;
+  --text-display--line-height: 40px;
+  --text-display--letter-spacing: -0.5px;
+  --text-display--font-weight: 800;
+  --text-h1: 28px;
+  --text-h1--line-height: 36px;
+  --text-h1--letter-spacing: -0.3px;
+  --text-h1--font-weight: 700;
+  --text-h2: 18px;
+  --text-h2--line-height: 28px;
+  --text-h2--font-weight: 700;
+  --text-h3: 20px;
+  --text-h3--line-height: 25px;
+  --text-h3--font-weight: 800;
+  --text-subtitle: 14px;
+  --text-subtitle--line-height: 20px;
+  --text-subtitle--letter-spacing: 0.2px;
+  --text-link: 16px;
+  --text-link--line-height: 24px;
+  --text-control: 15px;
+  --text-control--line-height: 22.5px;
+  --text-button: 13px;
+  --text-button--line-height: 19.5px;
+  --text-caption: 12px;
+  --text-caption--line-height: 16px;
+  --text-caption--letter-spacing: 0.1px;
+  --text-micro: 11px;
+  --text-micro--line-height: 15px;
+  --text-code: 13px;
+  --text-code--line-height: 19.5px;
+
+  /* FrameON "pop": 0.94 → 1 with a fade, 180ms. */
+  --animate-pop: pop 0.18s ease;
+
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: scale(0.94);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Variants and utilities shared with shadcn/ui (shadcn/tailwind.css, MIT).
+ * Base UI marks state with bare data attributes; these read both forms.
+ * ------------------------------------------------------------------ */
+@theme inline {
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--accordion-panel-height, auto);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--accordion-panel-height, auto);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+@custom-variant data-open {
+  &:where([data-state="open"]),
+  &:where([data-open]:not([data-open="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-closed {
+  &:where([data-state="closed"]),
+  &:where([data-closed]:not([data-closed="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-checked {
+  &:where([data-state="checked"]),
+  &:where([data-checked]:not([data-checked="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-unchecked {
+  &:where([data-state="unchecked"]),
+  &:where([data-unchecked]:not([data-unchecked="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-selected {
+  &:where([data-selected="true"]) {
+    @slot;
+  }
+}
+
+@custom-variant data-disabled {
+  &:where([data-disabled="true"]),
+  &:where([data-disabled]:not([data-disabled="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-active {
+  &:where([data-state="active"]),
+  &:where([data-active]:not([data-active="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-horizontal {
+  &:where([data-orientation="horizontal"]) {
+    @slot;
+  }
+}
+
+@custom-variant data-vertical {
+  &:where([data-orientation="vertical"]) {
+    @slot;
+  }
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-muted) transparent;
+}
+
+@utility scrollbar-gutter-stable {
+  scrollbar-gutter: stable;
+}
+
+/* Gold gradient text used for VIP labels. */
+@utility text-golden {
+  background-image: linear-gradient(to bottom right, #fae2aa, #fabc2d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility text-silver {
+  background-image: linear-gradient(to bottom right, #e8e8e8, #8c8c8c);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Horizontal fade at the edges of a scroll strip (Attachment group). */
+@utility scroll-fade-x {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 12px, #000 calc(100% - 12px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 12px, #000 calc(100% - 12px), transparent);
+}
+
+/* Bottom fade of a message list. */
+@utility scroll-fade-b {
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent);
+}
+
+/* Moving highlight across text while an attachment uploads. */
+@utility shimmer {
+  background-image: linear-gradient(
+    100deg,
+    currentColor 40%,
+    color-mix(in oklch, currentColor, #fff 55%) 50%,
+    currentColor 60%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: frameui-shimmer 2s linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
+@keyframes frameui-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}

@@ -1,0 +1,39 @@
+/*
+ * @hwagfu/frameui — everything in one import:
+ *
+ *   @import "tailwindcss";
+ *   @import "@hwagfu/frameui/styles.css";
+ *
+ * Tokens only (no element styles): import "@hwagfu/frameui/theme.css" instead.
+ */
+@import "tw-animate-css";
+@import "./theme.css";
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    color-scheme: dark;
+    background: var(--background);
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-subtitle);
+    line-height: var(--text-subtitle--line-height);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--brand) 28%, transparent);
+  }
+}

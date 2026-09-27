@@ -1,0 +1,18 @@
+{
+  "extends": "@tsconfig/strictest/tsconfig.json",
+  "compilerOptions": {
+    "target": "es2022",
+    "jsx": "react-jsx",
+    "lib": ["es2023", "DOM", "DOM.Iterable"],
+    "moduleDetection": "force",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "types": [],
+    "noEmit": true,
+    "verbatimModuleSyntax": true,
+    "isolatedDeclarations": false,
+    "noPropertyAccessFromIndexSignature": false
+  },
+  "include": ["src"]
+}

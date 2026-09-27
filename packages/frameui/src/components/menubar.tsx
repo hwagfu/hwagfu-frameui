@@ -1,0 +1,200 @@
+import type * as React from "react"
+import { Menu as MenuPrimitive } from "@base-ui/react/menu"
+import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar"
+
+import { CheckIcon } from "../lib/icons"
+import { menuItem } from "../lib/styles"
+import { cn } from "../lib/utils"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuRadioGroup,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "./dropdown-menu"
+
+function Menubar({ className, ...props }: MenubarPrimitive.Props) {
+  return (
+    <MenubarPrimitive
+      data-slot="menubar"
+      className={cn(
+        "flex h-11 items-center gap-1 rounded-md border border-border bg-card p-1",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function MenubarMenu({ ...props }: React.ComponentProps<typeof DropdownMenu>) {
+  return <DropdownMenu data-slot="menubar-menu" {...props} />
+}
+
+function MenubarGroup({ ...props }: React.ComponentProps<typeof DropdownMenuGroup>) {
+  return <DropdownMenuGroup data-slot="menubar-group" {...props} />
+}
+
+function MenubarPortal({ ...props }: React.ComponentProps<typeof DropdownMenuPortal>) {
+  return <DropdownMenuPortal data-slot="menubar-portal" {...props} />
+}
+
+/** A top-level menu title — turns gold while hovered or open, like FrameON's header. */
+function MenubarTrigger({ className, ...props }: React.ComponentProps<typeof DropdownMenuTrigger>) {
+  return (
+    <DropdownMenuTrigger
+      data-slot="menubar-trigger"
+      className={cn(
+        "flex h-full cursor-pointer items-center rounded-sm border-0 bg-transparent px-3 font-sans text-subtitle font-medium text-foreground transition-colors duration-150 outline-none select-none hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-expanded:bg-accent aria-expanded:text-accent-foreground",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function MenubarContent({
+  className,
+  align = "start",
+  alignOffset = -4,
+  sideOffset = 8,
+  ...props
+}: React.ComponentProps<typeof DropdownMenuContent>) {
+  return (
+    <DropdownMenuContent
+      data-slot="menubar-content"
+      align={align}
+      alignOffset={alignOffset}
+      sideOffset={sideOffset}
+      className={cn("min-w-52", className)}
+      {...props}
+    />
+  )
+}
+
+function MenubarItem({ ...props }: React.ComponentProps<typeof DropdownMenuItem>) {
+  return <DropdownMenuItem data-slot="menubar-item" {...props} />
+}
+
+function MenubarCheckboxItem({
+  className,
+  children,
+  checked,
+  inset,
+  ...props
+}: MenuPrimitive.CheckboxItem.Props & {
+  inset?: boolean
+}) {
+  return (
+    <MenuPrimitive.CheckboxItem
+      data-slot="menubar-checkbox-item"
+      data-inset={inset}
+      className={cn(menuItem, "pl-11", className)}
+      checked={checked}
+      {...props}
+    >
+      <span className="pointer-events-none absolute left-4 flex size-4 items-center justify-center text-brand">
+        <MenuPrimitive.CheckboxItemIndicator>
+          <CheckIcon className="size-[15px]" />
+        </MenuPrimitive.CheckboxItemIndicator>
+      </span>
+      {children}
+    </MenuPrimitive.CheckboxItem>
+  )
+}
+
+function MenubarRadioGroup({ ...props }: React.ComponentProps<typeof DropdownMenuRadioGroup>) {
+  return <DropdownMenuRadioGroup data-slot="menubar-radio-group" {...props} />
+}
+
+function MenubarRadioItem({
+  className,
+  children,
+  inset,
+  ...props
+}: MenuPrimitive.RadioItem.Props & {
+  inset?: boolean
+}) {
+  return (
+    <MenuPrimitive.RadioItem
+      data-slot="menubar-radio-item"
+      data-inset={inset}
+      className={cn(menuItem, "pl-11", className)}
+      {...props}
+    >
+      <span className="pointer-events-none absolute left-4 flex size-4 items-center justify-center">
+        <MenuPrimitive.RadioItemIndicator>
+          <span className="block size-2 rounded-full bg-brand" />
+        </MenuPrimitive.RadioItemIndicator>
+      </span>
+      {children}
+    </MenuPrimitive.RadioItem>
+  )
+}
+
+function MenubarLabel({
+  className,
+  inset,
+  ...props
+}: React.ComponentProps<typeof DropdownMenuLabel> & {
+  inset?: boolean
+}) {
+  return (
+    <DropdownMenuLabel
+      data-slot="menubar-label"
+      data-inset={inset}
+      className={cn(className)}
+      {...props}
+    />
+  )
+}
+
+function MenubarSeparator({ ...props }: React.ComponentProps<typeof DropdownMenuSeparator>) {
+  return <DropdownMenuSeparator data-slot="menubar-separator" {...props} />
+}
+
+function MenubarShortcut({ ...props }: React.ComponentProps<typeof DropdownMenuShortcut>) {
+  return <DropdownMenuShortcut data-slot="menubar-shortcut" {...props} />
+}
+
+function MenubarSub({ ...props }: React.ComponentProps<typeof DropdownMenuSub>) {
+  return <DropdownMenuSub data-slot="menubar-sub" {...props} />
+}
+
+function MenubarSubTrigger({
+  ...props
+}: React.ComponentProps<typeof DropdownMenuSubTrigger> & {
+  inset?: boolean
+}) {
+  return <DropdownMenuSubTrigger data-slot="menubar-sub-trigger" {...props} />
+}
+
+function MenubarSubContent({ ...props }: React.ComponentProps<typeof DropdownMenuSubContent>) {
+  return <DropdownMenuSubContent data-slot="menubar-sub-content" {...props} />
+}
+
+export {
+  Menubar,
+  MenubarPortal,
+  MenubarMenu,
+  MenubarTrigger,
+  MenubarContent,
+  MenubarGroup,
+  MenubarSeparator,
+  MenubarLabel,
+  MenubarItem,
+  MenubarShortcut,
+  MenubarCheckboxItem,
+  MenubarRadioGroup,
+  MenubarRadioItem,
+  MenubarSub,
+  MenubarSubTrigger,
+  MenubarSubContent,
+}
