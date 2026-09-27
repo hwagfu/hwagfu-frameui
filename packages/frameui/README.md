@@ -11,16 +11,27 @@ nền tối, tím chủ đạo, vàng thương hiệu — và tối ưu cho **Re
 ## Cài đặt
 
 FrameUI là gói **riêng tư** trên GitHub Packages. Lấy token cài đặt ở trang docs (mục
-*Truy cập & token*, cần đăng nhập), lưu vào biến môi trường `FRAMEUI_TOKEN`, rồi thêm `.npmrc`
-vào thư mục gốc dự án:
+*Truy cập & token*, cần đăng nhập), rồi lưu nó vào `~/.npmrc` của máy (một lần):
+
+```bash
+npm config set //npm.pkg.github.com/:_authToken "$(pbpaste)"   # macOS, token đang ở clipboard
+```
+
+Thêm `.npmrc` vào thư mục gốc dự án (không chứa token, commit được):
 
 ```ini
 @hwagfu:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${FRAMEUI_TOKEN}
 ```
 
 ```bash
 pnpm add @hwagfu/frameui
+```
+
+Không ghi `_authToken=${FRAMEUI_TOKEN}` vào `.npmrc` của dự án: pnpm 11 bỏ qua biến môi trường trong
+thông tin đăng nhập ở file đó. Trên Vercel/CI, đặt biến `FRAMEUI_TOKEN` rồi dùng lệnh cài:
+
+```bash
+npm config set //npm.pkg.github.com/:_authToken "$FRAMEUI_TOKEN" && pnpm install
 ```
 
 Peer dependency: `react` / `react-dom` ≥ 19.2, `tailwindcss` 4.

@@ -10,8 +10,7 @@ import { requireSession } from "@/lib/session"
 
 export const metadata: Metadata = { title: "Truy cập & token" }
 
-const NPMRC = `@hwagfu:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=\${FRAMEUI_TOKEN}`
+const NPMRC = "@hwagfu:registry=https://npm.pkg.github.com"
 
 export default async function AccessPage() {
   await requireSession("/docs/access")
@@ -45,20 +44,34 @@ export default async function AccessPage() {
         </Alert>
       )}
 
-      <H2>2. Lưu token vào biến môi trường</H2>
+      <H2>2. Lưu token vào máy</H2>
       <P>
-        Thay <Code>&lt;token&gt;</Code> bằng token ở trên. macOS / Linux (zsh):
+        Làm một lần cho mỗi máy. Bấm nút sao chép ở trên, rồi chạy lệnh ứng với hệ điều hành. Token được ghi vào{" "}
+        <Code>~/.npmrc</Code> của máy, không nằm trong dự án. macOS:
       </P>
-      <CodeBlock lang="bash" code={`echo 'export FRAMEUI_TOKEN=<token>' >> ~/.zshrc && source ~/.zshrc`} />
-      <P>Windows (PowerShell), mở lại terminal sau khi chạy:</P>
-      <CodeBlock lang="bash" code={`setx FRAMEUI_TOKEN "<token>"`} />
+      <CodeBlock lang="bash" code={'npm config set //npm.pkg.github.com/:_authToken "$(pbpaste)"'} />
+      <P>Windows (PowerShell):</P>
+      <CodeBlock lang="bash" code="npm config set //npm.pkg.github.com/:_authToken (Get-Clipboard)" />
+      <P>
+        Linux: thay <Code>&lt;token&gt;</Code> bằng token ở trên.
+      </P>
+      <CodeBlock lang="bash" code="npm config set //npm.pkg.github.com/:_authToken <token>" />
+      <P>Kiểm tra: lệnh sau in ra tên tài khoản GitHub là được.</P>
+      <CodeBlock lang="bash" code="npm whoami --registry=https://npm.pkg.github.com" />
 
       <H2>3. Thêm .npmrc vào dự án</H2>
       <P>
-        Đặt file này ở thư mục gốc dự án dùng FrameUI. File chỉ tham chiếu tên biến, không chứa token, nên commit
-        được.
+        Đặt file này ở thư mục gốc repo, cạnh <Code>pnpm-lock.yaml</Code>. File không chứa token nên commit được.
       </P>
       <CodeBlock lang="bash" title=".npmrc" code={NPMRC} />
+      <Alert variant="info">
+        <CircleAlert />
+        <AlertTitle>Đừng ghi token vào .npmrc của dự án</AlertTitle>
+        <AlertDescription>
+          pnpm 11 bỏ qua dòng <Code>{"_authToken=${BIẾN}"}</Code> trong file này vì lý do bảo mật, còn token viết thẳng
+          vào sẽ lộ theo git. Token chỉ nằm ở <Code>~/.npmrc</Code> của từng máy.
+        </AlertDescription>
+      </Alert>
 
       <H2>4. Cài thư viện</H2>
       <CodeBlock lang="bash" code="pnpm add @hwagfu/frameui" />
@@ -66,10 +79,26 @@ export default async function AccessPage() {
         Sau đó làm tiếp phần CSS và font ở trang <Code>Cài đặt</Code>.
       </P>
 
-      <H2>5. Khi deploy (Vercel, CI)</H2>
+      <H2>5. Khi deploy lên Vercel</H2>
+      <P>Server build của Vercel không có token của máy bạn, nên cần đưa token vào trước bước cài:</P>
+      <List>
+        <li>
+          <strong>Settings → Environment Variables</strong>: thêm <Code>FRAMEUI_TOKEN</Code> bằng token ở trên, tích
+          Production và Preview.
+        </li>
+        <li>
+          <strong>Settings → Build and Deployment → Install Command</strong>: bật Override, nhập lệnh dưới đây.
+        </li>
+        <li>Deploy lại.</li>
+      </List>
+      <CodeBlock
+        lang="bash"
+        title="Install Command"
+        code={'npm config set //npm.pkg.github.com/:_authToken "$FRAMEUI_TOKEN" && pnpm install'}
+      />
       <P>
-        Thêm biến <Code>FRAMEUI_TOKEN</Code> với cùng giá trị vào Environment Variables của dự án được deploy.
-        Bước cài gói trên server đọc <Code>.npmrc</Code> và lấy token từ biến đó.
+        GitHub Actions hay CI khác làm y hệt: lưu token thành secret <Code>FRAMEUI_TOKEN</Code>, rồi chạy lệnh trên thay
+        cho <Code>pnpm install</Code>.
       </P>
 
       <Alert>

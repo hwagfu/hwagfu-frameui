@@ -22,7 +22,7 @@ export default function InstallationPage() {
         <Link href="/docs/access" className="text-brand">
           Truy cập &amp; token
         </Link>{" "}
-        trước: lưu token vào biến <Code>FRAMEUI_TOKEN</Code> và thêm <Code>.npmrc</Code> vào dự án. Sau đó:
+        trước: lưu token vào máy và thêm <Code>.npmrc</Code> vào dự án. Sau đó:
       </P>
       <CodeBlock lang="bash" code="pnpm add @hwagfu/frameui" />
       <P>
