@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   title: { default: "FrameUI — thư viện component của FrameON", template: "%s · FrameUI" },
   description:
     "@hwagfu/frameui: toàn bộ component của shadcn/ui (Base UI) mang phong cách FrameON, ưu tiên Server Component, Tailwind CSS v4.",
+  // Private docs: keep them out of search engines.
+  robots: { index: false, follow: false },
 }
 
 export const viewport: Viewport = { themeColor: "#191b24", colorScheme: "dark" }

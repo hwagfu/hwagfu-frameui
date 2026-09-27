@@ -1,8 +1,10 @@
-import { Menu } from "lucide-react"
+import { LogOut, Menu } from "lucide-react"
 
 import { Badge } from "@hwagfu/frameui/badge"
 import { Button } from "@hwagfu/frameui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@hwagfu/frameui/sheet"
+
+import { logout } from "@/app/login/actions"
 
 import { DocsNav } from "./docs-nav"
 import { Wordmark } from "./logo"
@@ -53,10 +55,15 @@ export function SiteHeader() {
           size="sm"
           className="rounded-full"
           nativeButton={false}
-          render={<a href="/docs/installation" />}
+          render={<a href="/docs/access" />}
         >
           Bắt đầu
         </Button>
+        <form action={logout}>
+          <Button type="submit" variant="ghost" size="icon-sm" aria-label="Đăng xuất" title="Đăng xuất">
+            <LogOut />
+          </Button>
+        </form>
       </div>
     </header>
   )

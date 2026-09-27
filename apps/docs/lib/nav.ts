@@ -1,5 +1,6 @@
 export const guides = [
   { href: "/docs", title: "Giới thiệu", exact: true },
+  { href: "/docs/access", title: "Truy cập & token" },
   { href: "/docs/installation", title: "Cài đặt" },
   { href: "/docs/theming", title: "Theme & token" },
   { href: "/docs/server-components", title: "Server Components" },

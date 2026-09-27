@@ -10,6 +10,15 @@ nền tối, tím chủ đạo, vàng thương hiệu — và tối ưu cho **Re
 
 ## Cài đặt
 
+FrameUI là gói **riêng tư** trên GitHub Packages. Lấy token cài đặt ở trang docs (mục
+*Truy cập & token*, cần đăng nhập), lưu vào biến môi trường `FRAMEUI_TOKEN`, rồi thêm `.npmrc`
+vào thư mục gốc dự án:
+
+```ini
+@hwagfu:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${FRAMEUI_TOKEN}
+```
+
 ```bash
 pnpm add @hwagfu/frameui
 ```
@@ -66,6 +75,7 @@ export default function Page() {
 ```bash
 pnpm build      # tsdown (unbundle, giữ "use client" từng file) + sinh bảng exports
 pnpm typecheck
+pnpm publish    # lên GitHub Packages (publishConfig.registry), cần token classic có write:packages
 ```
 
 Tài liệu đầy đủ (tiếng Việt, có ví dụ trực tiếp): `apps/docs` trong monorepo — `pnpm docs:dev`.

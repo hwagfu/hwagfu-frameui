@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 
 import { Alert, AlertDescription, AlertTitle } from "@hwagfu/frameui/alert"
 
@@ -12,15 +13,22 @@ export default function InstallationPage() {
     <Article>
       <PageHeader
         title="Cài đặt"
-        lead="FrameUI là một gói npm bình thường: cài, nhập một file CSS, rồi import component."
+        lead="Thêm token của nhóm, cài gói, nhập một file CSS, rồi import component."
       />
 
       <H2>1. Cài gói</H2>
       <P>
+        FrameUI là gói riêng tư trên GitHub Packages. Làm theo trang{" "}
+        <Link href="/docs/access" className="text-brand">
+          Truy cập &amp; token
+        </Link>{" "}
+        trước: lưu token vào biến <Code>FRAMEUI_TOKEN</Code> và thêm <Code>.npmrc</Code> vào dự án. Sau đó:
+      </P>
+      <CodeBlock lang="bash" code="pnpm add @hwagfu/frameui" />
+      <P>
         Peer dependency: <Code>react</Code> và <Code>react-dom</Code> 19.2+, <Code>tailwindcss</Code> v4. Base UI và các thư
         viện phụ (recharts, cmdk, react-day-picker…) được cài kèm.
       </P>
-      <CodeBlock lang="bash" code="pnpm add @hwagfu/frameui" />
       <CodeBlock lang="bash" code="pnpm add -D tailwindcss @tailwindcss/postcss" />
 
       <H2>2. Nhập CSS</H2>

@@ -1,7 +1,7 @@
 {
   "name": "@hwagfu/frameui",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "FrameON design system on top of shadcn/ui (Base UI) — Server Component first, Tailwind CSS v4.",
   "author": {
     "email": "contact@hwagfu.dev",
@@ -9,7 +9,12 @@
     "url": "https://hwagfu.dev"
   },
   "license": "MIT",
-  "homepage": "https://hwagfu.dev/library/frameui",
+  "homepage": "https://github.com/hwagfu/hwagfu-frameui#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hwagfu/hwagfu-frameui.git",
+    "directory": "packages/frameui"
+  },
   "keywords": [
     "react",
     "shadcn",
@@ -28,7 +33,7 @@
     "LICENSE"
   ],
   "publishConfig": {
-    "access": "public"
+    "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
     "build": "tsdown && node scripts/postbuild.mjs",
