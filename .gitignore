@@ -10,3 +10,8 @@ next-env.d.ts
 .env
 .env.*
 !.env.example
+
+# shadcn registry — generated from packages/frameui by apps/docs/scripts/gen-registry.mjs
+apps/docs/registry.json
+apps/docs/registry/
+apps/docs/public/r/

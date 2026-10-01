@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react"
 import { Badge } from "@hwagfu/frameui/badge"
 import { Button } from "@hwagfu/frameui/button"
 import { Separator } from "@hwagfu/frameui/separator"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@hwagfu/frameui/tabs"
 
 import { CodeBlock } from "@/components/code-block"
 import { ComponentPreview } from "@/components/component-preview"
@@ -13,6 +14,7 @@ import { InlineMarkdown } from "@/components/inline-markdown"
 import { PropsTable } from "@/components/props-table"
 import { RuntimeBadge, runtimeInfo } from "@/components/runtime-badge"
 import { docs, getDoc, getNeighbours } from "@/lib/registry"
+import { shadcnAdd, shadcnImports } from "@/lib/shadcn"
 
 export function generateStaticParams() {
   return docs.map((doc) => ({ slug: doc.slug }))
@@ -71,8 +73,27 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
       </header>
 
       <section className="flex flex-col gap-3">
-        <h2 className="m-0 text-h2 text-heading">Import</h2>
-        <CodeBlock code={doc.imports} />
+        <h2 className="m-0 text-h2 text-heading">Cài đặt</h2>
+        <Tabs defaultValue="npm" className="gap-3">
+          <TabsList variant="line">
+            <TabsTrigger value="npm">Gói npm</TabsTrigger>
+            <TabsTrigger value="shadcn">shadcn CLI</TabsTrigger>
+          </TabsList>
+          <TabsContent value="npm" className="flex flex-col gap-3">
+            <CodeBlock code={doc.imports} />
+          </TabsContent>
+          <TabsContent value="shadcn" className="flex flex-col gap-3">
+            <CodeBlock lang="bash" code={shadcnAdd(doc.slug)} />
+            <CodeBlock code={shadcnImports(doc.imports)} />
+            <p className="m-0 text-caption text-tertiary">
+              Lần đầu dùng registry? Xem{" "}
+              <Link href="/docs/shadcn" className="text-brand">
+                Cài bằng shadcn CLI
+              </Link>
+              .
+            </p>
+          </TabsContent>
+        </Tabs>
       </section>
 
       <section className="flex flex-col gap-10">

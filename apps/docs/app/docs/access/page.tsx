@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import { CircleAlert, KeyRound } from "lucide-react"
 
 import { Alert, AlertDescription, AlertTitle } from "@hwagfu/frameui/alert"
@@ -20,7 +21,7 @@ export default async function AccessPage() {
     <Article>
       <PageHeader
         title="Truy cập & token"
-        lead="FrameUI là gói riêng tư trên GitHub Packages. Máy nào muốn cài thư viện cần token dưới đây."
+        lead="FrameUI là gói riêng tư trên GitHub Packages. Máy nào muốn cài thư viện — bằng gói npm hay shadcn CLI — cần token dưới đây."
       />
 
       <H2>1. Token</H2>
@@ -30,6 +31,13 @@ export default async function AccessPage() {
           <List>
             <li>
               Token chỉ có quyền <Code>read:packages</Code>: tải gói về được, không sửa hay publish được.
+            </li>
+            <li>
+              Cùng token này mở registry cho shadcn CLI — xem{" "}
+              <Link href="/docs/shadcn" className="text-brand">
+                Cài bằng shadcn CLI
+              </Link>
+              . Các bước dưới đây chỉ dành cho gói npm.
             </li>
             <li>Không commit token vào git, không gửi ra ngoài nhóm đồ án.</li>
           </List>
@@ -106,7 +114,7 @@ export default async function AccessPage() {
         <AlertTitle>Token bị lộ?</AlertTitle>
         <AlertDescription>
           Thu hồi token ở GitHub → Settings → Developer settings → Personal access tokens, tạo token mới rồi cập nhật
-          FRAMEUI_REGISTRY_TOKEN trên Vercel.
+          FRAMEUI_REGISTRY_TOKEN trên Vercel. Token cũ cũng hết dùng được với shadcn CLI.
         </AlertDescription>
       </Alert>
     </Article>

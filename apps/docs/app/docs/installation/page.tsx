@@ -15,6 +15,14 @@ export default function InstallationPage() {
         title="Cài đặt"
         lead="Thêm token của nhóm, cài gói, nhập một file CSS, rồi import component."
       />
+      <P>
+        Trang này là cách cài bằng gói npm <Code>@hwagfu/frameui</Code>. Muốn chép mã nguồn component vào dự án như
+        shadcn/ui thì xem{" "}
+        <Link href="/docs/shadcn" className="text-brand">
+          Cài bằng shadcn CLI
+        </Link>
+        .
+      </P>
 
       <H2>1. Cài gói</H2>
       <P>
