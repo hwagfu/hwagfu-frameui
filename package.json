@@ -9,6 +9,7 @@
     "docs:dev": "pnpm --filter frameui-docs dev",
     "docs:build": "pnpm --filter frameui-docs build",
     "docs:start": "pnpm --filter frameui-docs start",
+    "registry:build": "pnpm --filter frameui-docs registry:build",
     "typecheck": "pnpm -r typecheck"
   }
 }

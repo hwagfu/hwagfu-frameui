@@ -68,7 +68,12 @@ export default function IntroductionPage() {
       <H2>Trông như thế nào khi dùng</H2>
       <P>
         API giống hệt shadcn/ui: component ghép (compound), prop <Code>variant</Code> / <Code>size</Code>, prop{" "}
-        <Code>render</Code> của Base UI để đổi phần tử gốc. Điểm khác duy nhất là bạn import từ gói thay vì chép file.
+        <Code>render</Code> của Base UI để đổi phần tử gốc. Khác biệt nằm ở cách lấy mã: import từ gói, hoặc chép mã nguồn vào
+        dự án bằng{" "}
+        <Link href="/docs/shadcn" className="text-brand">
+          shadcn CLI
+        </Link>
+        .
       </P>
       <CodeBlock
         code={`import { Button } from "@hwagfu/frameui/button"

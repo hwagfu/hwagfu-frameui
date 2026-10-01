@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from "node:crypto"
+import { createHash, createHmac, timingSafeEqual } from "node:crypto"
 
 /**
  * Docs access control.
@@ -73,6 +73,21 @@ export function verifySessionToken(token: string | undefined): boolean {
   } catch {
     return false
   }
+}
+
+const sha256 = (value: string) => createHash("sha256").update(value).digest()
+
+/**
+ * shadcn registry (`/r/*.json`). The CLI cannot sign in, so it sends
+ * `Authorization: Bearer <token>` from the project's components.json. The
+ * token is the install token of GitHub Packages (FRAMEUI_REGISTRY_TOKEN):
+ * one secret covers both ways of installing FrameUI.
+ */
+export function verifyRegistryToken(authorization: string | null): boolean {
+  const expected = process.env.FRAMEUI_REGISTRY_TOKEN
+  const given = authorization?.match(/^Bearer\s+(\S+)\s*$/i)?.[1]
+  if (!expected || !given) return false
+  return timingSafeEqual(sha256(given), sha256(expected))
 }
 
 /** Only same-site relative paths are accepted as a post-login destination. */

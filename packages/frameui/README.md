@@ -44,6 +44,35 @@ Peer dependency: `react` / `react-dom` ≥ 19.2, `tailwindcss` 4.
 
 Font: theme đọc biến `--font-be-vietnam` (Be Vietnam Pro), ví dụ qua `next/font/google`.
 
+### Hoặc: chép mã nguồn bằng shadcn CLI
+
+Cùng bộ component có trong shadcn registry `@frameui` (trên trang docs, cùng token). Khai báo trong
+`components.json` của dự án:
+
+```json
+{
+  "registries": {
+    "@frameui": {
+      "url": "https://<trang-docs>/r/{name}.json",
+      "headers": { "Authorization": "Bearer ${FRAMEUI_TOKEN}" }
+    }
+  }
+}
+```
+
+Đặt `FRAMEUI_TOKEN=<token>` vào `.env.local`, rồi:
+
+```bash
+pnpm dlx shadcn@latest add @frameui/theme            # một lần: token, utility, style nền, cn()
+pnpm dlx shadcn@latest add @frameui/button @frameui/dialog
+```
+
+```tsx
+import { Button } from "@/components/ui/button"
+```
+
+Chi tiết: trang *Cài bằng shadcn CLI* của docs. Mỗi dự án chỉ nên dùng một trong hai cách.
+
 ## Dùng
 
 ```tsx
