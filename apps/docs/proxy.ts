@@ -26,6 +26,6 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Everything except the login page itself, build assets and crawler files.
-  matcher: ["/((?!login|_next/static|_next/image|favicon.ico|robots.txt).*)"],
+  // Everything except the login page itself, build assets, icons and crawler files.
+  matcher: ["/((?!login|_next/static|_next/image|favicon.ico|icon.svg|apple-icon.png|robots.txt).*)"],
 }

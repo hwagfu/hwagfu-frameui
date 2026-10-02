@@ -5,10 +5,12 @@ import { Button } from "@hwagfu/frameui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@hwagfu/frameui/sheet"
 
 import { logout } from "@/app/login/actions"
+import { searchItems } from "@/lib/search"
 
 import { DocsNav } from "./docs-nav"
 import { Wordmark } from "./logo"
 import { NavLink } from "./nav-link"
+import { SearchCommand } from "./search-command"
 
 const topLinkClass =
   "inline-flex items-center border-b-2 border-transparent px-3 py-5 text-subtitle text-foreground hover:border-brand hover:text-brand data-active:border-brand data-active:text-brand"
@@ -50,6 +52,7 @@ export function SiteHeader() {
           </NavLink>
         </nav>
         <div className="flex-1" />
+        <SearchCommand items={searchItems} />
         <Button
           variant="golden"
           size="sm"
