@@ -29,7 +29,7 @@ const twMerge = extendTailwindMerge({
         "code",
       ],
       shadow: ["raised", "elevated", "floating", "glow", "focus"],
-      animate: ["pop"],
+      animate: ["pop", "brand-spin", "brand-pulse", "brand-blink", "brand-tumble"],
     },
   },
 })
