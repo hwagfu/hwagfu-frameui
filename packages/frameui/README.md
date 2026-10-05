@@ -3,7 +3,7 @@
 Toàn bộ component của [shadcn/ui](https://ui.shadcn.com) (bản Base UI) được may lại theo giao diện **FrameON** —
 nền tối, tím chủ đạo, vàng thương hiệu — và tối ưu cho **React Server Components**.
 
-- **65 component**, đúng API của shadcn: `Button`, `Dialog`, `Select`, `Sidebar`, `DataTable`, `Chart`, `Questionnaire`…
+- **70 component**: toàn bộ shadcn (đúng API) cộng 5 component riêng của FrameON. API shadcn: `Button`, `Dialog`, `Select`, `Sidebar`, `DataTable`, `Chart`, `Questionnaire`…
 - **Server Component trước tiên**: 25 component không gửi JavaScript nào; phần lớn còn lại chỉ gửi primitive
   tương tác của Base UI, còn class / cva / tailwind-merge ở lại máy chủ.
 - **Tailwind CSS v4**, token màu theo tên biến của shadcn (`--primary`, `--accent`…) với giá trị FrameON.
@@ -96,6 +96,16 @@ export default function Page() {
   (trừ `sonner`, trùng tên `Toaster` với Toast của Base UI).
 - `cn()` đã biết thang token FrameON: `@hwagfu/frameui/utils`.
 - Thông báo: `<Toaster />` từ `@hwagfu/frameui/sonner`, gọi `toast()` từ gói `sonner`.
+
+## Component riêng của FrameON
+
+| Component | Dùng cho |
+|---|---|
+| `logo` | `LogoMark`, `Wordmark`, `LogoSpinner` (trang chờ), `LogoLost` (trang 404) |
+| `poster-art` | Poster dựng bằng chữ theo màu phim, ảnh thật phủ lên |
+| `poster-card` | Thẻ phim dọc 2:3, ngang 16:9, nghiêng 3D kiểu Top 10 |
+| `media-chip` | `ScoreChip`, `AgeChip`, `MetaChip`, `LangChip`, `OutlineChip` |
+| `rank-list` | Bảng xếp hạng, `RankNumber` |
 
 ## Biến thể thêm của FrameON
 

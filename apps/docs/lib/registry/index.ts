@@ -3,10 +3,12 @@ import { dataDisplay } from "./data"
 import { chat, feedback, utilities } from "./feedback"
 import { forms } from "./forms"
 import { foundations } from "./foundations"
+import { frameon } from "./frameon"
 import { navigation } from "./navigation"
 import { overlays } from "./overlays"
 
 export const docs: ComponentDoc[] = [
+  ...frameon,
   ...foundations,
   ...forms,
   ...dataDisplay,
@@ -18,6 +20,7 @@ export const docs: ComponentDoc[] = [
 ]
 
 export const groups: Group[] = [
+  "FrameON",
   "Nền tảng",
   "Biểu mẫu",
   "Hiển thị dữ liệu",

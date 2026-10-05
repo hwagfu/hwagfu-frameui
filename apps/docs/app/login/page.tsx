@@ -8,8 +8,8 @@ import { Button } from "@hwagfu/frameui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hwagfu/frameui/card"
 import { Field, FieldGroup, FieldLabel } from "@hwagfu/frameui/field"
 import { Input } from "@hwagfu/frameui/input"
+import { LogoMark } from "@hwagfu/frameui/logo"
 
-import { LogoMark } from "@/components/logo"
 import { getAuthConfig, safeNextPath, SESSION_COOKIE, verifySessionToken } from "@/lib/auth"
 import { login } from "./actions"
 
@@ -32,7 +32,7 @@ export default async function LoginPage({
     <main className="flex min-h-dvh items-center justify-center px-4 py-16">
       <div className="flex w-full max-w-sm flex-col items-center gap-6">
         <div className="flex items-center gap-2">
-          <LogoMark size={32} />
+          <LogoMark size={32} label="" />
           <span className="text-h3 text-heading">
             Frame<span className="text-brand">UI</span>
           </span>

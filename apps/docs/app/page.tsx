@@ -7,12 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hwag
 import { Checkbox } from "@hwagfu/frameui/checkbox"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@hwagfu/frameui/input-group"
 import { Label } from "@hwagfu/frameui/label"
+import { LogoMark } from "@hwagfu/frameui/logo"
 import { Progress } from "@hwagfu/frameui/progress"
 import { Switch } from "@hwagfu/frameui/switch"
 import { Tabs, TabsList, TabsTrigger } from "@hwagfu/frameui/tabs"
 import { ToggleGroup, ToggleGroupItem } from "@hwagfu/frameui/toggle-group"
 
-import { LogoMark } from "@/components/logo"
 import { SiteHeader } from "@/components/site-header"
 import { docs } from "@/lib/registry"
 
@@ -24,7 +24,7 @@ export default function Home() {
       <SiteHeader />
       <main className="mx-auto flex max-w-[1200px] flex-col gap-16 px-4 pt-16 pb-24 lg:px-8">
         <section className="flex flex-col items-center gap-6 text-center">
-          <LogoMark size={56} />
+          <LogoMark size={56} label="" />
           <Badge variant="outline" className="rounded-full px-3">
             shadcn/ui · Base UI · Tailwind CSS v4 · React 19
           </Badge>

@@ -220,9 +220,17 @@
       "types": "./dist/components/label.d.ts",
       "default": "./dist/components/label.js"
     },
+    "./logo": {
+      "types": "./dist/components/logo.d.ts",
+      "default": "./dist/components/logo.js"
+    },
     "./marker": {
       "types": "./dist/components/marker.d.ts",
       "default": "./dist/components/marker.js"
+    },
+    "./media-chip": {
+      "types": "./dist/components/media-chip.d.ts",
+      "default": "./dist/components/media-chip.js"
     },
     "./menubar": {
       "types": "./dist/components/menubar.d.ts",
@@ -252,6 +260,14 @@
       "types": "./dist/components/popover.d.ts",
       "default": "./dist/components/popover.js"
     },
+    "./poster-art": {
+      "types": "./dist/components/poster-art.d.ts",
+      "default": "./dist/components/poster-art.js"
+    },
+    "./poster-card": {
+      "types": "./dist/components/poster-card.d.ts",
+      "default": "./dist/components/poster-card.js"
+    },
     "./progress": {
       "types": "./dist/components/progress.d.ts",
       "default": "./dist/components/progress.js"
@@ -263,6 +279,10 @@
     "./radio-group": {
       "types": "./dist/components/radio-group.d.ts",
       "default": "./dist/components/radio-group.js"
+    },
+    "./rank-list": {
+      "types": "./dist/components/rank-list.d.ts",
+      "default": "./dist/components/rank-list.js"
     },
     "./resizable": {
       "types": "./dist/components/resizable.d.ts",

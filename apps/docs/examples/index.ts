@@ -46,7 +46,10 @@ import InputOtpDemo from "./input-otp-demo"
 import ItemDemo from "./item-demo"
 import KbdDemo from "./kbd-demo"
 import LabelDemo from "./label-demo"
+import LogoDemo from "./logo-demo"
+import LogoMotion from "./logo-motion"
 import MarkerDemo from "./marker-demo"
+import MediaChipDemo from "./media-chip-demo"
 import MenubarDemo from "./menubar-demo"
 import MessageDemo from "./message-demo"
 import MessageScrollerDemo from "./message-scroller-demo"
@@ -54,10 +57,15 @@ import NativeSelectDemo from "./native-select-demo"
 import NavigationMenuDemo from "./navigation-menu-demo"
 import PaginationDemo from "./pagination-demo"
 import PopoverDemo from "./popover-demo"
+import PosterArtDemo from "./poster-art-demo"
+import PosterCardDemo from "./poster-card-demo"
+import PosterCardTop10 from "./poster-card-top10"
+import PosterCardWide from "./poster-card-wide"
 import ProgressDemo from "./progress-demo"
 import QuestionnaireDemo from "./questionnaire-demo"
 import RadioGroupCards from "./radio-group-cards"
 import RadioGroupDemo from "./radio-group-demo"
+import RankListDemo from "./rank-list-demo"
 import ResizableDemo from "./resizable-demo"
 import ScrollAreaDemo from "./scroll-area-demo"
 import SelectDemo from "./select-demo"
@@ -125,7 +133,10 @@ export const examples: Record<string, ComponentType> = {
   "item-demo": ItemDemo,
   "kbd-demo": KbdDemo,
   "label-demo": LabelDemo,
+  "logo-demo": LogoDemo,
+  "logo-motion": LogoMotion,
   "marker-demo": MarkerDemo,
+  "media-chip-demo": MediaChipDemo,
   "menubar-demo": MenubarDemo,
   "message-demo": MessageDemo,
   "message-scroller-demo": MessageScrollerDemo,
@@ -133,10 +144,15 @@ export const examples: Record<string, ComponentType> = {
   "navigation-menu-demo": NavigationMenuDemo,
   "pagination-demo": PaginationDemo,
   "popover-demo": PopoverDemo,
+  "poster-art-demo": PosterArtDemo,
+  "poster-card-demo": PosterCardDemo,
+  "poster-card-top10": PosterCardTop10,
+  "poster-card-wide": PosterCardWide,
   "progress-demo": ProgressDemo,
   "questionnaire-demo": QuestionnaireDemo,
   "radio-group-cards": RadioGroupCards,
   "radio-group-demo": RadioGroupDemo,
+  "rank-list-demo": RankListDemo,
   "resizable-demo": ResizableDemo,
   "scroll-area-demo": ScrollAreaDemo,
   "select-demo": SelectDemo,
