@@ -67,6 +67,25 @@ function audioContext() {
   return Ctor ? (context = new Ctor()) : null
 }
 
+/** Sounds still playing, so `stopLogoSound` can fade them. */
+const playing = new Set<{ source: AudioBufferSourceNode; gain: GainNode }>()
+
+/**
+ * Fades out every logo sound still playing, over `fade` seconds — when the
+ * film starts while the intro's last chord still rings, or on "skip".
+ */
+function stopLogoSound(fade = 0.5) {
+  if (!context) return
+  const now = context.currentTime
+  for (const { source, gain } of playing) {
+    gain.gain.cancelScheduledValues(now)
+    gain.gain.setValueAtTime(gain.gain.value, now)
+    gain.gain.linearRampToValueAtTime(0, now + Math.max(fade, 0.01))
+    source.stop(now + Math.max(fade, 0.01) + 0.02)
+  }
+  playing.clear()
+}
+
 /** A function, not an inline check: `resume()` changes the state behind TypeScript's back. */
 const running = (ctx: BaseAudioContext) => ctx.state === "running"
 
@@ -74,18 +93,23 @@ const running = (ctx: BaseAudioContext) => ctx.state === "running"
  * Plays a logo cue and returns when its sound reaches the speakers, as a
  * `performance.now()` time — start the logo's animation then to keep picture
  * and sound together (`LogoSound` does this for you). Returns `null` when
- * nothing plays: on the server, without Web Audio, or before the visitor
- * has clicked or pressed a key on the page — browsers block sound until
- * then, so call it from a click handler, or after one.
+ * nothing plays: on the server, without Web Audio, or when the browser
+ * blocks sound — usually until the visitor has clicked or pressed a key on
+ * the page, so call it from a click handler, or after one.
  */
 async function playLogoSound(cue: LogoSoundCue, { volume = 0.9 }: LogoSoundOptions = {}): Promise<number | null> {
   const ctx = audioContext()
   if (!ctx) return null
   if (!running(ctx)) {
-    if (typeof navigator !== "undefined" && navigator.userActivation && !navigator.userActivation.hasBeenActive) {
-      return null
-    }
-    // Without a gesture `resume()` can wait forever; give it a moment, then give up.
+    // Let the browser decide: besides a click on the page, it also allows
+    // sound for sites the visitor allowed, installed web apps, frequently
+    // played sites (Chrome), kiosks and WebViews set up for it. Ask where it
+    // can tell (Firefox, newer Chrome); elsewhere just try.
+    const policy = (navigator as { getAutoplayPolicy?: (type: "audiocontext") => string }).getAutoplayPolicy?.(
+      "audiocontext"
+    )
+    if (policy === "disallowed") return null
+    // Refused, `resume()` can wait forever; give it a moment, then give up.
     await Promise.race([ctx.resume(), new Promise((done) => setTimeout(done, 300))])
     if (!running(ctx)) return null
   }
@@ -97,7 +121,11 @@ async function playLogoSound(cue: LogoSoundCue, { volume = 0.9 }: LogoSoundOptio
   const [audio, { offset }] = await Promise.all([buffer, load(cue)])
 
   const source = new AudioBufferSourceNode(ctx, { buffer: audio })
-  source.connect(new GainNode(ctx, { gain: volume })).connect(ctx.destination)
+  const gain = new GainNode(ctx, { gain: volume })
+  source.connect(gain).connect(ctx.destination)
+  const voice = { source, gain }
+  playing.add(voice)
+  source.addEventListener("ended", () => playing.delete(voice))
   // Read both clocks together: the sound starts `lead` after this instant.
   const lead = 0.03
   const at = ctx.currentTime + lead
@@ -107,4 +135,4 @@ async function playLogoSound(cue: LogoSoundCue, { volume = 0.9 }: LogoSoundOptio
   return now + (lead + (ctx.outputLatency || 0)) * 1000
 }
 
-export { playLogoSound, preloadLogoSound, type LogoSoundCue, type LogoSoundOptions }
+export { playLogoSound, preloadLogoSound, stopLogoSound, type LogoSoundCue, type LogoSoundOptions }

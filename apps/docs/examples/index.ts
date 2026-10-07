@@ -51,6 +51,7 @@ import LabelDemo from "./label-demo"
 import LogoDemo from "./logo-demo"
 import LogoFramex from "./logo-framex"
 import LogoFramexEffects from "./logo-framex-effects"
+import LogoIntroDemo from "./logo-intro-demo"
 import LogoMotion from "./logo-motion"
 import LogoSoundFrameon from "./logo-sound-frameon"
 import LogoSoundFramex from "./logo-sound-framex"
@@ -145,6 +146,7 @@ export const examples: Record<string, ComponentType> = {
   "logo-demo": LogoDemo,
   "logo-framex": LogoFramex,
   "logo-framex-effects": LogoFramexEffects,
+  "logo-intro-demo": LogoIntroDemo,
   "logo-motion": LogoMotion,
   "logo-sound-frameon": LogoSoundFrameon,
   "logo-sound-framex": LogoSoundFramex,

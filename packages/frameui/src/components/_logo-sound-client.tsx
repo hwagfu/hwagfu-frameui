@@ -11,8 +11,10 @@ type LogoSoundProps = {
   /**
    * When it plays.
    * - `"click"`: a click on the logo replays its animation, with the sound.
-   * - `"mount"`: as the logo appears — if the visitor has already clicked or
-   *   typed on the page; browsers block sound before that. Made for a screen
+   * - `"mount"`: as the logo appears — when the browser allows sound by
+   *   then: after a click or key press on the page (a client-side navigation
+   *   keeps it), or for a site the visitor allowed sound on, an installed web
+   *   app, a kiosk. Otherwise the logo plays silent. Made for a screen
    *   reached through a button, like "upgrade done".
    * - `"hover"`: when the pointer enters, at most every 1.8 s — for
    *   `shine="hover"` / `flare="hover"`.

@@ -129,8 +129,14 @@ export const frameon: ComponentDoc[] = [
     runtime: "island",
     description:
       "Âm thanh cho logo: MP3 dựng sẵn, mỗi cue một module, trang nào dùng mới tải. FrameON: hợp âm ấm, nhịp trầm, vệt gió, hai tiếng chuông. FrameX: intro kiểu rạp IMAX/4DX — rung ghế, khoảng lặng, cú nện, đàn hạc, âm vòm 3D. Logo vẫn là Server Component; chỉ lớp bọc LogoSound chạy trên client.",
-    imports: 'import { LogoSound, playLogoSound } from "@hwagfu/frameui/logo-sound"',
+    imports: 'import { LogoIntro, LogoSound, playLogoSound } from "@hwagfu/frameui/logo-sound"',
     examples: [
+      {
+        file: "logo-intro-demo",
+        title: "Trước khi vào phim",
+        description:
+          "`LogoIntro` trên trang xem phim: intro chạy có tiếng rồi mờ dần sang phim. Mở trang thẳng (chưa bấm gì) thì trình duyệt chặn tiếng — với cả phim — nên intro chờ sau nút \"Xem phim\"; bấm \"Xem với…\" bên dưới là có tiếng ngay. Có nút Bỏ qua sau 1 giây.",
+      },
       {
         file: "logo-sound-framex",
         title: "Intro FrameX",
@@ -169,6 +175,26 @@ export const frameon: ComponentDoc[] = [
         ],
       },
       {
+        name: "LogoIntro",
+        description:
+          "Logo trước phim, phủ lên player (`absolute inset-0`). Tự thử phát có tiếng; trình duyệt chặn thì chờ sau nút bắt đầu. Hết intro (FrameON 2,6 giây, FrameX 5,2 giây) hoặc khi bấm Bỏ qua: mờ dần 0,6 giây, gọi `onDone`, tiếng còn ngân được fade theo. Người dùng bật giảm chuyển động: vào phim ngay.",
+        props: [
+          { name: "cue", type: '"frameon-intro" | "framex-intro"', description: "Khớp với logo bên trong." },
+          { name: "onDone", type: "() => void", description: "Intro xong hoặc bị bỏ qua: bắt đầu phim (`video.play()`)." },
+          {
+            name: "onStart",
+            type: "() => void",
+            description:
+              "Gọi ngay trong cú bấm nút bắt đầu (khi trình duyệt cần cú bấm). Mở khoá `<video>` ở đây — `video.play()` rồi `video.pause()` — để iOS cho phim chạy có tiếng khi intro xong.",
+          },
+          { name: "startLabel", type: "ReactNode", default: '"Xem phim"', description: "Chữ trên nút bắt đầu." },
+          { name: "skipLabel", type: "ReactNode", default: '"Bỏ qua"', description: "Chữ trên nút bỏ qua." },
+          { name: "volume", type: "number", default: "0.9", description: "Âm lượng 0–1." },
+          { name: "children", type: "ReactNode", description: 'Logo với `entrance="intro"`.' },
+          classNameProp,
+        ],
+      },
+      {
         name: "Cue · prop của logo",
         props: [
           { name: '"frameon-intro"', type: "4,8 s · 77 KB", description: '`<Wordmark entrance="intro" />`' },
@@ -187,6 +213,11 @@ export const frameon: ComponentDoc[] = [
         ],
       },
       {
+        name: "stopLogoSound(fade?)",
+        description: "Fade tắt mọi tiếng logo đang phát trong `fade` giây (mặc định 0,5) — khi phim bắt đầu lúc hợp âm cuối còn ngân, hay khi bỏ qua.",
+        props: [{ name: "fade", type: "number", default: "0.5", description: "Thời gian fade (giây)." }],
+      },
+      {
         name: "preloadLogoSound(cue)",
         description:
           "Tải trước MP3 của một cue — không phát, không cần AudioContext, gọi được trước mọi cú bấm. `LogoSound` tự làm việc này; gọi tay khi dùng `playLogoSound` trực tiếp, ví dụ lúc mở trang thanh toán.",
@@ -199,6 +230,8 @@ export const frameon: ComponentDoc[] = [
       "FrameON ở giọng Rê, FrameX ở giọng Mi — cao hơn một cung, đúng nghĩa \"nâng cấp\".",
       "Âm vòm 3D (HRTF) và dải trầm chỉ nghe rõ qua tai nghe. Loa điện thoại không phát được dưới khoảng 80 Hz, nên dải trầm được làm méo nhẹ để sinh bội âm cao hơn — loa nhỏ vẫn cảm được độ nặng.",
       "Âm thanh chỉ phát một lần mỗi lượt; vòng lặp ánh sáng sau đó không có tiếng.",
+      "Không có cách nào ép trình duyệt phát tiếng khi người xem chưa bấm hay gõ phím trên trang — phim cũng vậy. Trên trang xem phim, intro đi chung cú bấm với phim: chuyển trang bằng `<Link>` (client navigation) sau nút \"Xem\" thì trình duyệt vẫn nhớ cú bấm và intro có tiếng ngay; mở link thẳng thì `LogoIntro` hiện nút \"Xem phim\". Ngoài ra trình duyệt tự cho phép với trang người dùng đã cho phép âm thanh, web app đã cài, trang hay xem media (Chrome), kiosk và WebView cấu hình sẵn.",
+      "iPhone: Web Audio mặc định im khi gạt nút im lặng, còn video phim thì không. `LogoIntro` đặt `navigator.audioSession.type = \"playback\"` (Safari 16.4+) để intro kêu như phim.",
       "Chỉ module này chạy trên client và chỉ được tải ở trang nào import nó; `@hwagfu/frameui/logo` không phụ thuộc vào nó.",
       "Lệch giữa hình và tiếng: đã đo khi render (tương quan chéo giữa bản gốc và MP3 đã giải mã) và bù khi phát; với Chromium là 0 mẫu.",
     ],
