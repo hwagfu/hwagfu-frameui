@@ -60,7 +60,8 @@ function registryPath(mod) {
 const fileType = (mod) =>
   mod.startsWith("components/") ? "registry:ui" : mod.startsWith("hooks/") ? "registry:hook" : "registry:lib"
 
-const IMPORT = /(\b(?:from|import)\s*)(["'])([^"']+)\2/g
+// Static imports, re-exports and dynamic `import("./…")` (logo-sound loads each cue on demand).
+const IMPORT = /(\b(?:from|import)\s*\(?\s*)(["'])([^"']+)\2/g
 const source = (mod) => readFileSync(join(SRC, files.get(mod)), "utf8")
 const resolve = (mod, spec) => posix.normalize(posix.join(posix.dirname(mod), spec))
 
