@@ -53,7 +53,7 @@ export const frameon: ComponentDoc[] = [
     notes: [
       "Màu: góc khung theo `currentColor` (mặc định `text-heading`), nút play luôn `fill-brand`. Đổi màu khung bằng `className=\"text-…\"`.",
       "Trang chờ của Next.js: `app/loading.tsx` trả về `<LogoSpinner label=\"Đang tải\" />` — là Server Component nên hiện ngay trong HTML đầu tiên. Trang 404: `app/not-found.tsx` với `LogoLost`.",
-      "`LogoSpinner` chừa lề cho vòng quay (góc bo của khung đi xa tâm hơn nửa khung 32×32), nên cùng `size` thì logo nhỏ hơn `LogoMark` khoảng 12%. Muốn bằng nhau: `size` của spinner ≈ `size` của mark × 1.14.",
+      "`LogoSpinner` cùng cỡ và chiếm cùng chỗ với `LogoMark` có cùng `size`, nên thay nhau được mà bố cục không xê dịch. Khi quay, góc khung vẽ tràn ra ngoài khung khoảng 6,7% `size` mỗi cạnh (3px ở cỡ 48): đừng đặt sát mép một khối `overflow-hidden`.",
       "Favicon nên là file riêng (viewBox ôm sát, nét dày hơn) vì ở 16px nét 2.6 quá mảnh.",
     ],
   },

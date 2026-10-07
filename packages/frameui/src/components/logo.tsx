@@ -20,19 +20,6 @@ const FRAME_BR = "M20.5 29.1H25a4.1 4.1 0 0 0 4.1-4.1v-4.5"
 const PLAY =
   "M12.8 10.1a1.1 1.1 0 0 1 1.66-.95l8.2 5.05a1.1 1.1 0 0 1 0 1.87l-8.2 5.05a1.1 1.1 0 0 1-1.66-.94z"
 
-/**
- * viewBox of the spinning mark. Turning, the frame sweeps a circle: the outer
- * edge of a rounded corner is |(9, 9)| + 4.1 + 1.3 (half the stroke) ≈ 18.1
- * units from the centre, past the 16-unit half of the 32×32 box — at 45° and
- * 135° the corners would be cut off. Padding the box to a radius of 18.2 keeps
- * the centre at (16, 16) and the whole turn inside the element.
- *
- * The frame turns about its own fill-box, whose centre is (16, 16) because the
- * corners mirror each other. `view-box` would not do: CSS anchors that box at
- * the user-space origin, so its centre would be (18.2, 18.2) here.
- */
-const SPIN_VIEWBOX = "-2.2 -2.2 36.4 36.4"
-
 const frameStroke = {
   fill: "none",
   stroke: "currentColor",
@@ -78,6 +65,15 @@ function LogoMark({ size = 30, label = "FrameON", className, ...props }: MarkPro
  * the play button breathes in step. The corners are symmetric through the
  * centre, so each half turn lands on the same picture and the loop has no seam.
  *
+ * Same size and footprint as a `LogoMark` of the same `size`, so one can stand
+ * in for the other without the layout moving. Turning, the frame sweeps a
+ * circle: the outer edge of a rounded corner is |(9, 9)| + 4.1 + 1.3 (half the
+ * stroke) ≈ 18.1 units from the centre, past the 16-unit half of the box. The
+ * SVG therefore draws outside its box (`overflow-visible`) — by up to 6.7% of
+ * `size` per side at 45° and 135° — instead of clipping the corners. The frame
+ * turns about its own fill-box, whose centre is (16, 16) as the corners mirror
+ * each other.
+ *
  * Pure SVG + CSS, no JavaScript, so a `loading.tsx` Server Component shows it in
  * the very first HTML. Both motions stop when the OS asks for reduced motion.
  */
@@ -87,8 +83,8 @@ function LogoSpinner({ size = 48, label, className, ...props }: MarkProps) {
       data-slot="logo-spinner"
       width={size}
       height={size}
-      viewBox={SPIN_VIEWBOX}
-      className={cn("block shrink-0 text-heading", className)}
+      viewBox="0 0 32 32"
+      className={cn("block shrink-0 overflow-visible text-heading", className)}
       {...a11y(label)}
       {...props}
     >
