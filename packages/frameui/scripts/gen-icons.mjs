@@ -33,6 +33,9 @@ const ICONS = {
   Settings2Icon: "settings-2",
   CalendarIcon: "calendar",
   StarIcon: "star",
+  CommandIcon: "command",
+  OptionIcon: "option",
+  ArrowBigUpIcon: "arrow-big-up",
 }
 
 const dir = join(realpathSync("node_modules/lucide-react"), "dist/esm/icons")

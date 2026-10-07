@@ -45,6 +45,7 @@ import InputGroupDemo from "./input-group-demo"
 import InputOtpDemo from "./input-otp-demo"
 import ItemDemo from "./item-demo"
 import KbdDemo from "./kbd-demo"
+import KbdModifiers from "./kbd-modifiers"
 import LabelDemo from "./label-demo"
 import LogoDemo from "./logo-demo"
 import LogoMotion from "./logo-motion"
@@ -132,6 +133,7 @@ export const examples: Record<string, ComponentType> = {
   "input-otp-demo": InputOtpDemo,
   "item-demo": ItemDemo,
   "kbd-demo": KbdDemo,
+  "kbd-modifiers": KbdModifiers,
   "label-demo": LabelDemo,
   "logo-demo": LogoDemo,
   "logo-motion": LogoMotion,

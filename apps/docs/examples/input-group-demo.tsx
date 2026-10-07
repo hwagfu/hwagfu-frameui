@@ -21,7 +21,7 @@ export default function InputGroupDemo() {
             <Search />
           </InputGroupAddon>
           <InputGroupAddon align="inline-end">
-            <Kbd>⌘K</Kbd>
+            <Kbd modifier="command">K</Kbd>
           </InputGroupAddon>
         </InputGroup>
       </form>

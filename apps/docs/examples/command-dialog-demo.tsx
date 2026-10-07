@@ -31,7 +31,7 @@ export default function CommandDialogDemo() {
   return (
     <>
       <Button variant="secondary" onClick={() => setOpen(true)}>
-        Mở bảng lệnh <Kbd>⌘J</Kbd>
+        Mở bảng lệnh <Kbd modifier="command">J</Kbd>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen} title="Bảng lệnh" description="Tìm lệnh để chạy">
         <CommandInput placeholder="Tìm kiếm…" />

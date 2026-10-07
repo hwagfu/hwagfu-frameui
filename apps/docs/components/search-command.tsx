@@ -46,7 +46,7 @@ function isEditing(target: EventTarget | null) {
 export function SearchCommand({ items }: { items: SearchItem[] }) {
   const router = useRouter()
   const [open, setOpen] = React.useState(false)
-  const [shortcut, setShortcut] = React.useState("⌘K")
+  const [mac, setMac] = React.useState(true)
 
   const groups = React.useMemo(() => {
     const map = new Map<string, SearchItem[]>()
@@ -55,7 +55,7 @@ export function SearchCommand({ items }: { items: SearchItem[] }) {
   }, [items])
 
   React.useEffect(() => {
-    if (!/Mac|iPhone|iPad/.test(navigator.platform)) setShortcut("Ctrl K")
+    if (!/Mac|iPhone|iPad/.test(navigator.platform)) setMac(false)
     const onKey = (event: KeyboardEvent) => {
       if (event.key.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) {
         event.preventDefault()
@@ -85,7 +85,9 @@ export function SearchCommand({ items }: { items: SearchItem[] }) {
       >
         <Search />
         <span className="hidden flex-1 text-left md:inline">Tìm trang, component…</span>
-        <Kbd className="hidden md:inline-flex">{shortcut}</Kbd>
+        <Kbd className="hidden md:inline-flex" modifier={mac ? "command" : undefined}>
+          {mac ? "K" : "Ctrl K"}
+        </Kbd>
       </Button>
       <CommandDialog
         open={open}
