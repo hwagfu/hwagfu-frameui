@@ -76,11 +76,38 @@ export const foundations: ComponentDoc[] = [
     name: "Kbd",
     group: "Nền tảng",
     runtime: "server",
-    description: "Hiển thị phím tắt bàn phím.",
+    description:
+      "Hiển thị phím tắt bàn phím. Prop `modifier` vẽ sẵn biểu tượng của phím Command, Option, Control, Shift — `<Kbd modifier=\"command\">K</Kbd>` thành ⌘K.",
     imports: 'import { Kbd, KbdGroup } from "@hwagfu/frameui/kbd"',
     shadcn: "kbd",
-    examples: [{ file: "kbd-demo", title: "Phím tắt" }],
-    api: [{ name: "Kbd / KbdGroup", props: [classNameProp, restProp("kbd")] }],
+    examples: [
+      { file: "kbd-demo", title: "Phím tắt" },
+      {
+        file: "kbd-modifiers",
+        title: "Phím bổ trợ",
+        description:
+          "`modifier` đứng một mình là phím ⌘ ⌥ ⌃ ⇧; kèm chữ thì thành một phím gộp như ⌘S. Tổ hợp nhiều phím: xếp các `Kbd` trong `KbdGroup`.",
+      },
+    ],
+    api: [
+      {
+        name: "Kbd",
+        props: [
+          {
+            name: "modifier",
+            type: '"command" | "option" | "control" | "shift"',
+            description:
+              "Vẽ biểu tượng ⌘ / ⌥ / ⌃ / ⇧ trước nội dung. Là SVG nên không phụ thuộc font có các ký tự này hay không; trình đọc màn hình đọc tên phím.",
+          },
+          classNameProp,
+          restProp("kbd"),
+        ],
+      },
+      { name: "KbdGroup", props: [classNameProp, restProp("kbd")] },
+    ],
+    notes: [
+      "Biểu tượng là kiểu phím của Mac. Trên Windows / Linux người dùng quen chữ hơn: `<Kbd>Ctrl</Kbd>`, `<Kbd>Alt</Kbd>` — xem ô tìm kiếm ⌘K của docs này, đổi theo hệ điều hành.",
+    ],
   },
   {
     slug: "label",
