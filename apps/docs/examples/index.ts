@@ -49,7 +49,13 @@ import KbdDemo from "./kbd-demo"
 import KbdModifiers from "./kbd-modifiers"
 import LabelDemo from "./label-demo"
 import LogoDemo from "./logo-demo"
+import LogoFramex from "./logo-framex"
+import LogoFramexEffects from "./logo-framex-effects"
+import LogoIntroDemo from "./logo-intro-demo"
 import LogoMotion from "./logo-motion"
+import LogoSoundFrameon from "./logo-sound-frameon"
+import LogoSoundFramex from "./logo-sound-framex"
+import LogoSoundHover from "./logo-sound-hover"
 import MarkerDemo from "./marker-demo"
 import MediaChipDemo from "./media-chip-demo"
 import MenubarDemo from "./menubar-demo"
@@ -138,7 +144,13 @@ export const examples: Record<string, ComponentType> = {
   "kbd-modifiers": KbdModifiers,
   "label-demo": LabelDemo,
   "logo-demo": LogoDemo,
+  "logo-framex": LogoFramex,
+  "logo-framex-effects": LogoFramexEffects,
+  "logo-intro-demo": LogoIntroDemo,
   "logo-motion": LogoMotion,
+  "logo-sound-frameon": LogoSoundFrameon,
+  "logo-sound-framex": LogoSoundFramex,
+  "logo-sound-hover": LogoSoundHover,
   "marker-demo": MarkerDemo,
   "media-chip-demo": MediaChipDemo,
   "menubar-demo": MenubarDemo,

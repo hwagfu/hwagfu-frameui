@@ -16,6 +16,35 @@ const labelProp = (fallback?: string) => ({
     "Tên đọc cho trình đọc màn hình. Bỏ trống (hoặc `\"\"`) thì hình là trang trí, ví dụ khi chữ bên cạnh đã ghi tên.",
 })
 
+const variantProp = {
+  name: "variant",
+  type: '"frameon" | "framex"',
+  default: '"frameon"',
+  description: "`framex`: logo vàng của gói hội viên cao cấp FrameX.",
+}
+
+const entranceProp = {
+  name: "entrance",
+  type: '"intro" | "reveal"',
+  description:
+    "Chạy một lần khi logo xuất hiện. FrameON chỉ có `intro` (2,3 giây: góc khung vẽ ra, nút play đáp xuống, chữ trượt vào, ON bật sáng). FrameX: `reveal` (1,6 giây) hoặc `intro` — reveal sau 1,2 giây ánh sáng tụ lại, có cú nện: bùng sáng, sóng xung kích, rung nhẹ. Âm thanh: Logo Sound.",
+}
+
+const framexProps = [
+  {
+    name: "shine",
+    type: 'boolean | "hover"',
+    description: "FrameX. Vệt sáng lướt qua mark rồi qua chữ, 5,5 giây một lần. `\"hover\"`: một lần khi rê chuột vào.",
+  },
+  {
+    name: "flare",
+    type: 'boolean | "hover"',
+    description:
+      "FrameX. Đốm sáng lóe như kim loại bắt sáng: cùng `shine` thì lóe ở góc dưới rồi chữ X, nơi vệt sáng rời đi; một mình thì lần lượt góc trên, góc dưới, chữ X, 4,2 giây một lần.",
+  },
+  { name: "glow", type: "boolean", description: "FrameX. Ánh vàng ấm thở chậm sau mark và quanh chữ X." },
+]
+
 /** Pieces of FrameON's own look that shadcn has no equivalent for. */
 export const frameon: ComponentDoc[] = [
   {
@@ -24,7 +53,7 @@ export const frameon: ComponentDoc[] = [
     group: "FrameON",
     runtime: "server",
     description:
-      "Logo FrameON: hai góc khung phim và nút play vàng. Một bộ nét duy nhất dựng ra mark tĩnh, wordmark, biểu tượng chờ và mark trang 404 — sửa logo là sửa đúng một chỗ.",
+      "Logo FrameON: hai góc khung phim và nút play vàng. Một bộ nét duy nhất dựng ra mark tĩnh, wordmark, biểu tượng chờ, mark trang 404 và FrameX — logo vàng của gói hội viên cao cấp, có ánh kim, lóe sáng, hào quang và intro. Sửa logo là sửa đúng một chỗ.",
     imports: 'import { LogoLost, LogoMark, LogoSpinner, Wordmark } from "@hwagfu/frameui/logo"',
     examples: [
       { file: "logo-demo", title: "Mark và wordmark", description: "`Wordmark` co giãn theo `size` (cỡ chữ); mark và khoảng cách đi theo." },
@@ -34,16 +63,48 @@ export const frameon: ComponentDoc[] = [
         description:
           "`LogoSpinner`: khung quay nửa vòng mỗi nhịp, nút play thở theo. `LogoLost`: hai góc chớp so le, nút play tuột khỏi chỗ và lắc lư. Thuần SVG + CSS, tự tắt khi hệ điều hành bật giảm chuyển động.",
       },
+      {
+        file: "logo-framex",
+        title: "FrameX",
+        description:
+          "`variant=\"framex\"`: mark đúc vàng nguyên khối, tên in hoa giãn rộng với chữ X vàng. Cùng `size` thì mark FrameX bằng đúng mark FrameON, nên đổi gói trên header không xê dịch gì.",
+      },
+      {
+        file: "logo-framex-effects",
+        title: "Ánh sáng và chuyển động FrameX",
+        description:
+          "Bật từng hiệu ứng bằng prop và ghép tuỳ ý. Thời gian của mọi phần được tính trên server từ các prop đang bật, nên vẫn là Server Component thuần CSS. Âm thanh đi kèm: xem Logo Sound.",
+      },
     ],
     api: [
-      { name: "LogoMark", props: [sizeProp(30), labelProp("FrameON"), classNameProp, restProp("svg")] },
-      { name: "LogoSpinner", props: [sizeProp(48), labelProp(), classNameProp, restProp("svg")] },
+      {
+        name: "LogoMark",
+        props: [
+          sizeProp(30),
+          variantProp,
+          labelProp("FrameON · FrameX"),
+          entranceProp,
+          ...framexProps,
+          classNameProp,
+          restProp("svg"),
+        ],
+      },
+      { name: "LogoSpinner", props: [sizeProp(48), variantProp, labelProp(), classNameProp, restProp("svg")] },
       { name: "LogoLost", props: [sizeProp(96), labelProp(), classNameProp, restProp("svg")] },
       {
         name: "Wordmark",
         props: [
-          { name: "size", type: "number", default: "24", description: "Cỡ chữ (px). Mark = size × 1.24, khoảng cách = size × 0.34." },
+          {
+            name: "size",
+            type: "number",
+            default: "24",
+            description:
+              "Cỡ chữ (px). Mark = size × 1.24, khoảng cách = size × 0.34. FrameX: tên in hoa = size × 0.62 (rộng hơn nhiều), mark vẫn size × 1.24.",
+          },
           { name: "mark", type: "boolean", default: "true", description: "Hiện mark trước tên." },
+          variantProp,
+          entranceProp,
+          ...framexProps,
           { name: "children", type: "ReactNode", default: "Frame<ON>", description: "Thay tên, ví dụ docs này dùng `Frame<span className=\"text-brand\">UI</span>`." },
           renderProp,
           classNameProp,
@@ -55,6 +116,124 @@ export const frameon: ComponentDoc[] = [
       "Trang chờ của Next.js: `app/loading.tsx` trả về `<LogoSpinner label=\"Đang tải\" />` — là Server Component nên hiện ngay trong HTML đầu tiên. Trang 404: `app/not-found.tsx` với `LogoLost`.",
       "`LogoSpinner` cùng cỡ và chiếm cùng chỗ với `LogoMark` có cùng `size`, nên thay nhau được mà bố cục không xê dịch. Khi quay, góc khung vẽ tràn ra ngoài khung khoảng 6,7% `size` mỗi cạnh (3px ở cỡ 48): đừng đặt sát mép một khối `overflow-hidden`.",
       "Favicon nên là file riêng (viewBox ôm sát, nét dày hơn) vì ở 16px nét 2.6 quá mảnh.",
+      "FrameX lấy vàng từ gradient riêng của từng nét (sáng góc trên trái, một dải sáng giữa, đậm góc dưới phải) nên không theo `currentColor`; FrameON vẫn như cũ.",
+      "Hiệu ứng FrameX tràn ra ngoài khung (hào quang, đốm lóe, sóng xung kích): chừa chỗ quanh logo, đừng đặt trong khối `overflow-hidden` sát mép.",
+      "Ở header chỉ nên dùng `shine=\"hover\" flare=\"hover\"`: hiệu ứng tự lặp ở cỡ nhỏ làm rối giao diện. `entrance` hợp với màn hình riêng của logo, như trang giới thiệu gói hay \"nâng cấp thành công\" — chữ đổi khoảng cách khi xuất hiện nên bề rộng logo thay đổi trong khoảng 1 giây.",
+      "Mọi hiệu ứng là CSS: tắt khi hệ điều hành bật giảm chuyển động, logo hiện ngay ở trạng thái cuối.",
+    ],
+  },
+  {
+    slug: "logo-sound",
+    name: "Logo Sound",
+    group: "FrameON",
+    runtime: "island",
+    description:
+      "Âm thanh cho logo: MP3 dựng sẵn, mỗi cue một module, trang nào dùng mới tải. FrameON: hợp âm ấm, nhịp trầm, vệt gió, hai tiếng chuông. FrameX: intro kiểu rạp IMAX/4DX — rung ghế, khoảng lặng, cú nện, đàn hạc, âm vòm 3D. Logo vẫn là Server Component; chỉ lớp bọc LogoSound chạy trên client.",
+    imports: 'import { LogoIntro, LogoSound, playLogoSound } from "@hwagfu/frameui/logo-sound"',
+    examples: [
+      {
+        file: "logo-intro-demo",
+        title: "Trước khi vào phim",
+        description:
+          "`LogoIntro` trên trang xem phim: intro chạy có tiếng rồi mờ dần sang phim. Mở trang thẳng (chưa bấm gì) thì trình duyệt chặn tiếng — với cả phim — nên intro chờ sau nút \"Xem phim\"; bấm \"Xem với…\" bên dưới là có tiếng ngay. Có nút Bỏ qua sau 1 giây.",
+      },
+      {
+        file: "logo-sound-framex",
+        title: "Intro FrameX",
+        description:
+          "Tích tụ 1,2 giây (rung trầm như ghế rạp rung, luồng gió vòng từ sau ra trước, cao độ hội tụ về một hợp âm) → khoảng lặng ~0,1 giây → cú nện khi nút play đáp xuống (bass tụt sâu, kèn đồng, sóng xung kích, logo rung) → đàn hạc khi chữ hiện → vệt sáng lướt ngang trước mặt → hai tiếng chuông kim loại ở hai đốm lóe → hợp âm kết.",
+      },
+      {
+        file: "logo-sound-frameon",
+        title: "Intro FrameON",
+        description:
+          "Bản đơn giản, 2,3 giây: hợp âm Rê mở ra khi góc khung được vẽ, nhịp trầm khi nút play đáp xuống, vệt gió khi chữ trượt vào, hai tiếng chuông khi chữ ON bật sáng.",
+      },
+      {
+        file: "logo-sound-hover",
+        title: "Rê chuột trên header",
+        description: "`trigger=\"hover\"`: rê chuột vào logo thì vệt sáng chạy một lần kèm hai tiếng chuông nhỏ — tối đa một lần mỗi 1,8 giây.",
+      },
+    ],
+    api: [
+      {
+        name: "LogoSound",
+        description:
+          "Bọc logo (Server Component) mà không thêm hộp nào (`display: contents`). Tải trước MP3 của cue lúc trình duyệt rảnh; khi phát, khởi động lại animation CSS của logo đúng lúc âm thanh tới loa — đã tính độ trễ đầu ra — nên hình và tiếng luôn khớp.",
+        props: [
+          { name: "cue", type: '"frameon-intro" | "framex-intro" | "framex-reveal" | "framex-hover"', description: "Âm thanh nào — chọn đúng cue làm cho prop của logo (xem bảng bên dưới)." },
+          {
+            name: "trigger",
+            type: '"click" | "mount" | "hover"',
+            default: '"click"',
+            description:
+              "`click`: bấm vào logo thì phát lại cả hình lẫn tiếng. `mount`: phát khi logo xuất hiện — nếu người xem đã bấm hay gõ phím trên trang trước đó (trình duyệt chặn âm thanh trước lần đó), hợp với màn hình tới sau một nút bấm. `hover`: khi rê chuột vào.",
+          },
+          { name: "volume", type: "number", default: "0.9", description: "Âm lượng 0–1." },
+          { name: "children", type: "ReactNode", description: "Logo." },
+          classNameProp,
+        ],
+      },
+      {
+        name: "LogoIntro",
+        description:
+          "Logo trước phim, phủ lên player (`absolute inset-0`). Tự thử phát có tiếng; trình duyệt chặn thì chờ sau nút bắt đầu. Hết intro (FrameON 2,6 giây, FrameX 5,2 giây) hoặc khi bấm Bỏ qua: mờ dần 0,6 giây, gọi `onDone`, tiếng còn ngân được fade theo. Người dùng bật giảm chuyển động: vào phim ngay.",
+        props: [
+          { name: "cue", type: '"frameon-intro" | "framex-intro"', description: "Khớp với logo bên trong." },
+          { name: "onDone", type: "() => void", description: "Intro xong hoặc bị bỏ qua: bắt đầu phim (`video.play()`)." },
+          {
+            name: "onStart",
+            type: "() => void",
+            description:
+              "Gọi ngay trong cú bấm nút bắt đầu (khi trình duyệt cần cú bấm). Mở khoá `<video>` ở đây — `video.play()` rồi `video.pause()` — để iOS cho phim chạy có tiếng khi intro xong.",
+          },
+          { name: "startLabel", type: "ReactNode", default: '"Xem phim"', description: "Chữ trên nút bắt đầu." },
+          { name: "skipLabel", type: "ReactNode", default: '"Bỏ qua"', description: "Chữ trên nút bỏ qua." },
+          { name: "volume", type: "number", default: "0.9", description: "Âm lượng 0–1." },
+          { name: "children", type: "ReactNode", description: 'Logo với `entrance="intro"`.' },
+          classNameProp,
+        ],
+      },
+      {
+        name: "Cue · prop của logo",
+        props: [
+          { name: '"frameon-intro"', type: "4,8 s · 77 KB", description: '`<Wordmark entrance="intro" />`' },
+          { name: '"framex-intro"', type: "10,5 s · 165 KB", description: '`<Wordmark variant="framex" entrance="intro" shine flare glow />`' },
+          { name: '"framex-reveal"', type: "5,9 s · 93 KB", description: '`entrance="reveal"` (FrameX)' },
+          { name: '"framex-hover"', type: "6,9 s · 109 KB", description: '`shine="hover" flare="hover"` (FrameX) — tiếng chính 1,5 giây, phần còn lại là tiếng vang tắt dần.' },
+        ],
+      },
+      {
+        name: "playLogoSound(cue, options?)",
+        description:
+          "Phát một cue trên AudioContext dùng chung của trang, trả về thời điểm (theo `performance.now()`) âm thanh tới loa — dùng khi tự điều khiển, ví dụ trong `onClick` của nút \"Nâng cấp\". Trả về `null` khi không phát: trên server, không có Web Audio, hoặc người xem chưa bấm gì trên trang.",
+        props: [
+          { name: "cue", type: "LogoSoundCue", description: "Như trên." },
+          { name: "options.volume", type: "number", default: "0.9", description: "Âm lượng 0–1." },
+        ],
+      },
+      {
+        name: "stopLogoSound(fade?)",
+        description: "Fade tắt mọi tiếng logo đang phát trong `fade` giây (mặc định 0,5) — khi phim bắt đầu lúc hợp âm cuối còn ngân, hay khi bỏ qua.",
+        props: [{ name: "fade", type: "number", default: "0.5", description: "Thời gian fade (giây)." }],
+      },
+      {
+        name: "preloadLogoSound(cue)",
+        description:
+          "Tải trước MP3 của một cue — không phát, không cần AudioContext, gọi được trước mọi cú bấm. `LogoSound` tự làm việc này; gọi tay khi dùng `playLogoSound` trực tiếp, ví dụ lúc mở trang thanh toán.",
+        props: [{ name: "cue", type: "LogoSoundCue", description: "Như trên." }],
+      },
+    ],
+    notes: [
+      "Tiếng được tổng hợp một lần bằng Web Audio (`packages/frameui/scripts/sounds/engine.ts`) rồi encode ra MP3 128 kbps; trình duyệt chỉ giải mã một lần rồi phát — không tổng hợp gì lúc chạy, nghe giống hệt nhau trên mọi máy. File MP3 gốc nằm ở `packages/frameui/sounds/` (dùng được cho video). Sửa tiếng: sửa engine rồi chạy `pnpm --filter @hwagfu/frameui sounds`.",
+      "MP3 nằm trong module JS dạng data URI nên đi được cả qua npm lẫn shadcn registry, không cần cấu hình bundler; mỗi cue là một chunk riêng, chỉ tải khi trang dùng đến.",
+      "FrameON ở giọng Rê, FrameX ở giọng Mi — cao hơn một cung, đúng nghĩa \"nâng cấp\".",
+      "Âm vòm 3D (HRTF) và dải trầm chỉ nghe rõ qua tai nghe. Loa điện thoại không phát được dưới khoảng 80 Hz, nên dải trầm được làm méo nhẹ để sinh bội âm cao hơn — loa nhỏ vẫn cảm được độ nặng.",
+      "Âm thanh chỉ phát một lần mỗi lượt; vòng lặp ánh sáng sau đó không có tiếng.",
+      "Không có cách nào ép trình duyệt phát tiếng khi người xem chưa bấm hay gõ phím trên trang — phim cũng vậy. Trên trang xem phim, intro đi chung cú bấm với phim: chuyển trang bằng `<Link>` (client navigation) sau nút \"Xem\" thì trình duyệt vẫn nhớ cú bấm và intro có tiếng ngay; mở link thẳng thì `LogoIntro` hiện nút \"Xem phim\". Ngoài ra trình duyệt tự cho phép với trang người dùng đã cho phép âm thanh, web app đã cài, trang hay xem media (Chrome), kiosk và WebView cấu hình sẵn.",
+      "iPhone: Web Audio mặc định im khi gạt nút im lặng, còn video phim thì không. `LogoIntro` đặt `navigator.audioSession.type = \"playback\"` (Safari 16.4+) để intro kêu như phim.",
+      "Chỉ module này chạy trên client và chỉ được tải ở trang nào import nó; `@hwagfu/frameui/logo` không phụ thuộc vào nó.",
+      "Lệch giữa hình và tiếng: đã đo khi render (tương quan chéo giữa bản gốc và MP3 đã giải mã) và bù khi phát; với Chromium là 0 mẫu.",
     ],
   },
   {

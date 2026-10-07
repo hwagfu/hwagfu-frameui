@@ -101,7 +101,8 @@ export default function Page() {
 
 | Component | Dùng cho |
 |---|---|
-| `logo` | `LogoMark`, `Wordmark`, `LogoSpinner` (trang chờ), `LogoLost` (trang 404) |
+| `logo` | `LogoMark`, `Wordmark`, `LogoSpinner` (trang chờ), `LogoLost` (trang 404); `variant="framex"` cho gói cao cấp FrameX với `shine`, `flare`, `glow`, `entrance` — thuần CSS, vẫn là Server Component |
+| `logo-sound` | Âm thanh cho logo (MP3 dựng sẵn, tải theo cue): `LogoSound`, `playLogoSound()`, `preloadLogoSound()` |
 | `poster-art` | Poster dựng bằng chữ theo màu phim, ảnh thật phủ lên |
 | `poster-card` | Thẻ phim dọc 2:3, ngang 16:9, nghiêng 3D kiểu Top 10 |
 | `media-chip` | `ScoreChip`, `AgeChip`, `MetaChip`, `LangChip`, `OutlineChip` |
@@ -127,6 +128,8 @@ export default function Page() {
 pnpm build      # tsdown (unbundle, giữ "use client" từng file) + sinh bảng exports
 pnpm typecheck
 pnpm publish    # lên GitHub Packages (publishConfig.registry), cần token classic có write:packages
+pnpm sounds     # dựng lại âm thanh logo: scripts/sounds/engine.ts → sounds/*.mp3 + src/components/_logo-sound-*.ts
+                # (cần Chromium — của Playwright hoặc CHROMIUM_PATH — và ffmpeg có libmp3lame)
 ```
 
 Tài liệu đầy đủ (tiếng Việt, có ví dụ trực tiếp): `apps/docs` trong monorepo — `pnpm docs:dev`.
