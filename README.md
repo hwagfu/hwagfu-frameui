@@ -21,6 +21,8 @@ pnpm docs:build
 1. **Gói npm** — `pnpm add @hwagfu/frameui`, rồi `import { Button } from "@hwagfu/frameui/button"`.
 2. **shadcn CLI** — chép mã nguồn vào dự án: `pnpm dlx shadcn@latest add @frameui/button`, rồi
    `import { Button } from "@/components/ui/button"`.
+3. **Trợ lý AI** — `pnpm dlx shadcn@latest mcp init --client claude`: MCP server của shadcn tìm, xem ví dụ và
+   cài component từ `@frameui` (registry có sẵn toàn bộ ví dụ của docs dưới dạng `registry:example`).
 
 Registry không có mã riêng: `apps/docs/scripts/gen-registry.mjs` đọc `packages/frameui/src`, viết lại import
 tương đối thành `@/registry/frameui/…` và sinh `registry.json` (kèm theme FrameON dạng `cssVars` + `css`);

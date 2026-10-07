@@ -30,6 +30,7 @@ export type ExampleDoc = {
 }
 
 export type Group =
+  | "FrameON"
   | "Nền tảng"
   | "Biểu mẫu"
   | "Hiển thị dữ liệu"

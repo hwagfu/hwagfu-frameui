@@ -54,6 +54,12 @@
   --warning: #ffd875;
   --info: #8b5cf6;
 
+  /* age ratings (AgeChip): K green · T13 gold · T16 orange · T18 red */
+  --age-k: oklch(0.78 0.15 152);
+  --age-t13: #ffd875;
+  --age-t16: oklch(0.76 0.17 55);
+  --age-t18: oklch(0.66 0.2 25);
+
   /* lines + fields */
   --border: #2f3346;
   --input: rgb(170 170 170 / 0.3);
@@ -107,6 +113,10 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-info: var(--info);
+  --color-age-k: var(--age-k);
+  --color-age-t13: var(--age-t13);
+  --color-age-t16: var(--age-t16);
+  --color-age-t18: var(--age-t18);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-field: var(--field);
@@ -182,6 +192,15 @@
   /* FrameON "pop": 0.94 → 1 with a fade, 180ms. */
   --animate-pop: pop 0.18s ease;
 
+  /*
+   * FrameON logo motion. The two frame corners are symmetric about the centre,
+   * so a half turn lands on the same picture and the spin loops seamlessly.
+   */
+  --animate-brand-spin: brand-spin 1.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  --animate-brand-pulse: brand-pulse 1.2s ease-in-out infinite;
+  --animate-brand-blink: brand-blink 2.2s ease-in-out infinite;
+  --animate-brand-tumble: brand-tumble 2.6s ease-in-out infinite;
+
   @keyframes pop {
     from {
       opacity: 0;
@@ -190,6 +209,35 @@
     to {
       opacity: 1;
       transform: scale(1);
+    }
+  }
+
+  @keyframes brand-spin {
+    to {
+      transform: rotate(180deg);
+    }
+  }
+
+  @keyframes brand-pulse {
+    50% {
+      opacity: 0.6;
+      transform: scale(0.8);
+    }
+  }
+
+  @keyframes brand-blink {
+    50% {
+      opacity: 0.15;
+    }
+  }
+
+  @keyframes brand-tumble {
+    0%,
+    100% {
+      transform: translate(1.5px, 3.5px) rotate(18deg);
+    }
+    50% {
+      transform: translate(2.5px, 4.5px) rotate(2deg);
     }
   }
 }

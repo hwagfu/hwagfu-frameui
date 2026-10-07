@@ -32,6 +32,7 @@ const ICONS = {
   EyeOffIcon: "eye-off",
   Settings2Icon: "settings-2",
   CalendarIcon: "calendar",
+  StarIcon: "star",
 }
 
 const dir = join(realpathSync("node_modules/lucide-react"), "dist/esm/icons")

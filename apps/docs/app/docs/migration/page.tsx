@@ -27,6 +27,14 @@ const rows: [string, string, string][] = [
   ["`NavLink active`", "`NavigationMenuLink active`", ""],
   ["`Tooltip content placement`", "`Tooltip` + `TooltipTrigger` + `TooltipContent side`", "Tự lật khi chạm mép, không bị khung cha cắt."],
   ["`Toast tone` / `Toaster` / `toast()`", "`@hwagfu/frameui/sonner` + `toast()` của sonner", "Cùng API: `toast.success`, `toast.promise`, `toast.dismiss`…"],
+  ["`LogoMark` / `Wordmark href`", "`LogoMark` / `Wordmark render={<Link href=\"/\" />}`", "Thêm `LogoSpinner` (trang chờ) và `LogoLost` (trang 404)."],
+  ["`PosterCard film progress`", "`PosterCard` + `PosterCardMedia` + `PosterArt` + `PosterCardHeader` / `PosterCardFooter` / `PosterCardProgress`", "Không còn gắn với kiểu `Film`: ráp từ dữ liệu của ứng dụng."],
+  ["`BackdropCard film`", "`PosterCardMedia ratio=\"wide\"`", "Tên phim đặt trong `PosterCardFooter`."],
+  ["`PosterArt film ratio big dim`", "`PosterArt lines background color variant textSize studio`", "`c1` / `c2` / `artLines` / `artSize` / `style` thành props; ảnh thật là `children`."],
+  ["`ScoreChip` · `AgeChip film` · `MetaChip tone` · `LangChip` · `OutlineChip href`", "`@hwagfu/frameui/media-chip`", "`AgeChip rating`, `MetaChip variant=\"sub\"`, `OutlineChip render={<Link />}`."],
+  ["`ProgressLine value` (0–1)", "`PosterCardProgress value` (0–100)", ""],
+  ["`RankList films`", "`RankList` + `RankListItem rank` + `RankListMedia` / `RankListContent`", "Bọc trong `Card` cho khung bảng."],
+  ["`Top10Section`", "`PosterCardMedia tilt` + `RankNumber size=\"lg\"`", "Dải cuộn ngang: `Carousel`."],
   ["`MorphIcon` / `DetailsIcon`", "(giữ trong ứng dụng)", "Không thuộc shadcn — tiếp tục dùng `morphicons` ở tầng ứng dụng."],
 ]
 
@@ -78,7 +86,10 @@ bg-modal       → bg-modal             text-secondary  → text-muted-foregroun
 bg-subtle      → bg-muted             text-tertiary   → text-tertiary
 bg-accent      → bg-brand             text-accent     → text-brand
 text-on-accent → text-brand-foreground border-subtle  → border-border
-text-input     → text-control         p-xs/sm/md/lg/xl → p-2/3/4/5/6`}
+text-ink       → text-heading         bg-canvas       → bg-sunken
+bg-purple      → bg-primary           text-gold-muted → text-brand-muted
+text-age-*     → text-age-*           text-input      → text-control
+p-xs/sm/md/lg/xl → p-2/3/4/5/6`}
       />
     </Article>
   )

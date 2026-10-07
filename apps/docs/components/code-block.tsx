@@ -11,7 +11,7 @@ export async function CodeBlock({
   className,
 }: {
   code: string
-  lang?: "tsx" | "ts" | "bash" | "css" | "json"
+  lang?: "tsx" | "ts" | "bash" | "css" | "json" | "md"
   title?: string
   className?: string
 }) {

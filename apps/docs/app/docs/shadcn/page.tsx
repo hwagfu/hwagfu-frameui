@@ -134,6 +134,14 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/
 pnpm dlx shadcn@latest add ${NAMESPACE}/button --overwrite`}
       />
 
+      <P>
+        Muốn trợ lý AI (Claude Code, Cursor…) tự tìm và cài component? Xem{" "}
+        <Link href="/docs/mcp" className="text-brand">
+          MCP cho trợ lý AI
+        </Link>
+        .
+      </P>
+
       <Alert variant="info">
         <CircleAlert />
         <AlertTitle>Deploy không cần token</AlertTitle>

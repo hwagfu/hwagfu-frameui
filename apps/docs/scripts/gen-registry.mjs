@@ -5,6 +5,8 @@
 //   registry/frameui/ui/…      components
 //   registry/frameui/lib/…     cn() and the FrameON helpers (render, styles, icons)
 //   registry/frameui/hooks/…   hooks
+//   registry/frameui/examples/… the docs examples, for `shadcn view` and the
+//                              shadcn MCP server ("show me a button example")
 //
 // Files are copied as they are, except relative imports, which become
 // `@/registry/frameui/…` — the shadcn CLI maps those onto the aliases of the
@@ -78,11 +80,24 @@ function dependency(name) {
 // --- Titles and descriptions, from the docs' component registry -----------
 
 const meta = new Map()
+const exampleMeta = new Map() // example file → { title, description }
+const STRING = String.raw`("(?:[^"\\]|\\.)*")`
 for (const f of readdirSync("lib/registry").filter((f) => f.endsWith(".ts"))) {
   const code = readFileSync(join("lib/registry", f), "utf8")
-  const entry = /slug:\s*"([^"]+)",\s*name:\s*"([^"]+)",[\s\S]*?description:\s*("(?:[^"\\]|\\.)*")/g
+  const entry = new RegExp(String.raw`slug:\s*"([^"]+)",\s*name:\s*"([^"]+)",[\s\S]*?description:\s*` + STRING, "g")
   for (const [, slug, name, description] of code.matchAll(entry)) {
     meta.set(slug, { title: name, description: JSON.parse(description) })
+  }
+  // Each component's chunk of the file, up to the next `slug:`, holds its examples.
+  for (const chunk of code.split(/(?=slug:\s*")/).slice(1)) {
+    const component = meta.get(chunk.match(/^slug:\s*"([^"]+)"/)[1])
+    const example = new RegExp(String.raw`\{\s*file:\s*"([^"]+)",\s*title:\s*` + STRING + String.raw`(?:,\s*description:\s*` + STRING + ")?", "g")
+    for (const [, file, title, description] of chunk.matchAll(example)) {
+      exampleMeta.set(file, {
+        title: `${component.title}: ${JSON.parse(title)}`,
+        description: description ? JSON.parse(description) : component.description,
+      })
+    }
   }
 }
 
@@ -171,6 +186,65 @@ const items = entries.map((entry) => {
   }
 })
 
+// --- Examples --------------------------------------------------------------
+// The live examples of the docs. The shadcn MCP server finds them by name
+// ("button-demo") and shows their code to an assistant asking how a component
+// is used, so their imports are the ones a project actually writes
+// (`@/components/ui/button`) rather than registry paths. The CLI still maps
+// them onto the project's aliases when an example is added.
+
+const docsPkg = JSON.parse(readFileSync("package.json", "utf8"))
+const EXAMPLE_PEERS = new Set([...PEERS, "next"])
+const exampleDependency = (name) => {
+  const range = docsPkg.dependencies?.[name] ?? pkg.dependencies?.[name]
+  if (!range) throw new Error(`gen-registry: an example imports "${name}", which the docs do not depend on`)
+  return `${name}@${range}`
+}
+
+/** "@hwagfu/frameui/button" → the module it names, as in `files`. */
+function libraryModule(spec) {
+  const sub = spec.slice("@hwagfu/frameui/".length)
+  if (sub === "utils") return "lib/utils"
+  if (sub === "icons") return "lib/icons"
+  return sub.startsWith("hooks/") ? sub : `components/${sub}`
+}
+
+const exampleItems = readdirSync("examples")
+  .filter((f) => f.endsWith(".tsx"))
+  .sort()
+  .map((f) => {
+    const name = f.slice(0, -4)
+    const info = exampleMeta.get(name)
+    if (!info) throw new Error(`gen-registry: examples/${f} is not listed in any component of lib/registry`)
+    if (ownerOf(`components/${name}`) === name && files.has(`components/${name}`)) {
+      throw new Error(`gen-registry: example "${name}" has the same name as a component`)
+    }
+    const dependencies = new Set()
+    const registryDependencies = new Set()
+    const code = readFileSync(join("examples", f), "utf8").replace(IMPORT, (match, keyword, quote, spec) => {
+      if (spec.startsWith("@hwagfu/frameui/")) {
+        const mod = libraryModule(spec)
+        if (!files.has(mod)) throw new Error(`gen-registry: examples/${f} imports unknown "${spec}"`)
+        registryDependencies.add(`${NAMESPACE}/${ownerOf(mod)}`)
+        return `${keyword}${quote}@/${registryPath(mod).replace(/^ui\//, "components/ui/")}${quote}`
+      }
+      if (spec.startsWith(".")) throw new Error(`gen-registry: examples/${f} has a relative import "${spec}"`)
+      if (!EXAMPLE_PEERS.has(packageOf(spec))) dependencies.add(exampleDependency(packageOf(spec)))
+      return match
+    })
+    const path = join(OUT, "examples", f)
+    mkdirSync(dirname(path), { recursive: true })
+    writeFileSync(path, code)
+    return {
+      name,
+      type: "registry:example",
+      ...info,
+      ...(dependencies.size ? { dependencies: [...dependencies].sort() } : {}),
+      registryDependencies: [...registryDependencies].sort(),
+      files: [{ path, type: "registry:example" }],
+    }
+  })
+
 // --- Theme: styles.css (+ theme.css) as cssVars and css -------------------
 //
 // The CLI merges these into the project's Tailwind CSS file: palette into
@@ -243,7 +317,7 @@ const registry = {
   $schema: "https://ui.shadcn.com/schema/registry.json",
   name: "frameui",
   homepage: "https://github.com/hwagfu/hwagfu-frameui",
-  items: [theme, ...items],
+  items: [theme, ...items, ...exampleItems],
 }
 writeFileSync("registry.json", JSON.stringify(registry, null, 2) + "\n")
-console.log(`registry: ${registry.items.length} items, ${written.size} files`)
+console.log(`registry: ${registry.items.length} items (${exampleItems.length} examples), ${written.size + exampleItems.length} files`)
