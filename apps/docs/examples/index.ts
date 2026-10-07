@@ -38,6 +38,7 @@ import DropdownMenuCheckboxes from "./dropdown-menu-checkboxes"
 import DropdownMenuDemo from "./dropdown-menu-demo"
 import EmptyDemo from "./empty-demo"
 import FieldDemo from "./field-demo"
+import FilmPeekDemo from "./film-peek-demo"
 import HoverCardDemo from "./hover-card-demo"
 import InputDemo from "./input-demo"
 import InputField from "./input-field"
@@ -126,6 +127,7 @@ export const examples: Record<string, ComponentType> = {
   "dropdown-menu-demo": DropdownMenuDemo,
   "empty-demo": EmptyDemo,
   "field-demo": FieldDemo,
+  "film-peek-demo": FilmPeekDemo,
   "hover-card-demo": HoverCardDemo,
   "input-demo": InputDemo,
   "input-field": InputField,

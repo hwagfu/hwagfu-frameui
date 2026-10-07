@@ -164,4 +164,47 @@ export const frameon: ComponentDoc[] = [
       },
     ],
   },
+  {
+    slug: "film-peek",
+    name: "Film Peek",
+    group: "FrameON",
+    runtime: "island",
+    description:
+      "Popup xem nhanh khi rê chuột vào thẻ phim: ảnh ngang, nút xem / thêm vào danh sách / chi tiết, tên, điểm, độ tuổi, tóm tắt. Cả trang chỉ một lớp client bắt sự kiện từ mọi thẻ có `data-peek`, nên thẻ phim vẫn là Server Component.",
+    imports:
+      'import { FilmPeek, FilmPeekActions, FilmPeekBody, FilmPeekDescription, FilmPeekGenres, FilmPeekHeader, FilmPeekMedia, FilmPeekMeta, FilmPeekRating, FilmPeekSynopsis, FilmPeekTitle } from "@hwagfu/frameui/film-peek"',
+    examples: [
+      {
+        file: "film-peek-demo",
+        title: "Rê chuột vào poster",
+        description:
+          "Đặt chuột yên trên một thẻ khoảng 0,4 giây thì popup mở ngay trên thẻ; lướt ngang qua dải thì không bật. Rê sang popup vẫn giữ, rời ra là đóng. Màn cảm ứng không có popup: chạm là vào trang phim.",
+      },
+    ],
+    api: [
+      {
+        name: "FilmPeek",
+        description:
+          "Lớp client, đặt một lần mỗi trang (hoặc trong layout). Thẻ phim chỉ cần thuộc tính `data-peek=\"<id>\"` (`<PosterCard data-peek=\"sintel\">`, phần tử nào cũng được). Popup vẽ qua portal ra `<body>` nên dải cuộn ngang không cắt nó.",
+        props: [
+          { name: "panels", type: "Record<string, ReactNode>", description: "Nội dung popup theo từng phim, khoá là giá trị `data-peek` của thẻ. Dựng trên server bằng các mảnh bên dưới — dùng được `next/link`, i18n của ứng dụng." },
+          { name: "openDelay", type: "number", default: "420", description: "Đặt chuột yên bao lâu (ms) thì mở — đủ dài để lướt ngang dải phim không bật popup." },
+          { name: "closeDelay", type: "number", default: "140", description: "Rời thẻ bao lâu (ms) thì đóng — đủ để kịp rê sang popup." },
+          { name: "width", type: "number", default: "340", description: "Bề rộng popup (px)." },
+          classNameProp,
+        ],
+      },
+      { name: "FilmPeekMedia · FilmPeekHeader", description: "Ảnh 16:9 và khối tên + tagline; gắn link bằng `render`.", props: [renderProp, classNameProp] },
+      { name: "FilmPeekRating", props: [{ name: "value", type: "number", description: "Điểm, sao vàng + một chữ số thập phân." }, classNameProp] },
+      {
+        name: "FilmPeekBody · FilmPeekActions · FilmPeekTitle · FilmPeekDescription · FilmPeekMeta · FilmPeekSynopsis · FilmPeekGenres",
+        props: [classNameProp, restProp("div")],
+      },
+    ],
+    notes: [
+      "Đóng khi: rời thẻ và popup, bấm ra ngoài, bấm một liên kết trong popup, nhấn Esc, cuộn trang hay dải phim, đổi cỡ cửa sổ. Bấm nút (thêm vào danh sách…) thì popup ở lại.",
+      "Chỉ bật với chuột thật (`(hover: hover) and (pointer: fine)`). Bàn phím và màn cảm ứng đi thẳng vào trang phim qua liên kết của thẻ.",
+      "Chỉ popup đang mở được dựng vào trang; `panels` của mọi phim đi kèm HTML đầu tiên dưới dạng dữ liệu RSC, nên với trang rất nhiều phim hãy giữ nội dung popup gọn.",
+    ],
+  },
 ]

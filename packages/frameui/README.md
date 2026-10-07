@@ -3,7 +3,7 @@
 Toàn bộ component của [shadcn/ui](https://ui.shadcn.com) (bản Base UI) được may lại theo giao diện **FrameON** —
 nền tối, tím chủ đạo, vàng thương hiệu — và tối ưu cho **React Server Components**.
 
-- **70 component**: toàn bộ shadcn (đúng API) cộng 5 component riêng của FrameON. API shadcn: `Button`, `Dialog`, `Select`, `Sidebar`, `DataTable`, `Chart`, `Questionnaire`…
+- **71 component**: toàn bộ shadcn (đúng API) cộng 6 component riêng của FrameON. API shadcn: `Button`, `Dialog`, `Select`, `Sidebar`, `DataTable`, `Chart`, `Questionnaire`…
 - **Server Component trước tiên**: 25 component không gửi JavaScript nào; phần lớn còn lại chỉ gửi primitive
   tương tác của Base UI, còn class / cva / tailwind-merge ở lại máy chủ.
 - **Tailwind CSS v4**, token màu theo tên biến của shadcn (`--primary`, `--accent`…) với giá trị FrameON.
@@ -106,6 +106,7 @@ export default function Page() {
 | `poster-card` | Thẻ phim dọc 2:3, ngang 16:9, nghiêng 3D kiểu Top 10 |
 | `media-chip` | `ScoreChip`, `AgeChip`, `MetaChip`, `LangChip`, `OutlineChip` |
 | `rank-list` | Bảng xếp hạng, `RankNumber` |
+| `film-peek` | Popup xem nhanh khi rê chuột vào thẻ phim (`data-peek`) |
 
 ## Biến thể thêm của FrameON
 
