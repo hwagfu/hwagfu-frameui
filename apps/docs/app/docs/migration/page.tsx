@@ -35,6 +35,7 @@ const rows: [string, string, string][] = [
   ["`ProgressLine value` (0–1)", "`PosterCardProgress value` (0–100)", ""],
   ["`RankList films`", "`RankList` + `RankListItem rank` + `RankListMedia` / `RankListContent`", "Bọc trong `Card` cho khung bảng."],
   ["`Top10Section`", "`PosterCardMedia tilt` + `RankNumber size=\"lg\"`", "Dải cuộn ngang: `Carousel`."],
+  ["`FilmPeek peeks`", "`FilmPeek panels` + `FilmPeekMedia` / `FilmPeekActions` / `FilmPeekHeader`…", "Nội dung popup dựng trên server theo từng `data-peek`: dùng `next/link`, `t()` của ứng dụng."],
   ["`MorphIcon` / `DetailsIcon`", "(giữ trong ứng dụng)", "Không thuộc shadcn — tiếp tục dùng `morphicons` ở tầng ứng dụng."],
 ]
 

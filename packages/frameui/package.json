@@ -192,6 +192,10 @@
       "types": "./dist/components/field.d.ts",
       "default": "./dist/components/field.js"
     },
+    "./film-peek": {
+      "types": "./dist/components/film-peek.d.ts",
+      "default": "./dist/components/film-peek.js"
+    },
     "./hover-card": {
       "types": "./dist/components/hover-card.d.ts",
       "default": "./dist/components/hover-card.js"
