@@ -5,6 +5,7 @@ import * as React from "react"
 import { cn } from "../lib/utils"
 import { Button } from "./button"
 import { playLogoSound, preloadLogoSound, stopLogoSound, type LogoSoundCue } from "./_logo-sound-player"
+import { embers } from "./_logo-embers"
 
 type IntroCue = Extract<LogoSoundCue, "frameon-intro" | "framex-intro">
 
@@ -12,6 +13,8 @@ type IntroCue = Extract<LogoSoundCue, "frameon-intro" | "framex-intro">
 const LENGTH: Record<IntroCue, number> = { "frameon-intro": 2600, "framex-intro": 5200 }
 /** Fade of the stage into the film (ms) — the sound's last chord fades with it. */
 const FADE = 600
+/** When the FrameX hit lands (ms): the Wordmark intro's 1.2 s pre-roll + 0.73 s (logo.tsx). */
+const HIT = 1930
 
 type LogoIntroProps = {
   /** `"frameon-intro"` or, for FrameX members, `"framex-intro"` — match the logo inside. */
@@ -34,6 +37,8 @@ type LogoIntroProps = {
   skipLabel?: React.ReactNode
   /** 0–1. Default 0.9. */
   volume?: number | undefined
+  /** FrameX: gold dust drifts up around the logo from the hit on, drawn on a canvas. Default `true`. */
+  particles?: boolean | undefined
   /** The logo, with `entrance="intro"`. */
   children: React.ReactNode
   className?: string | undefined
@@ -53,6 +58,7 @@ function playbackSession() {
  * click — the visitor opened the page directly instead of pressing "watch" —
  * the stage waits behind a start button, as the film itself would have to.
  * Skippable. Visitors who ask for reduced motion go straight to the film.
+ * FrameX adds drifting gold dust, drawn on a canvas in step with the sound.
  *
  * Covers its positioned parent (`absolute inset-0`): put it over the player.
  */
@@ -63,10 +69,13 @@ function LogoIntro({
   startLabel = "Xem phim",
   skipLabel = "Bỏ qua",
   volume,
+  particles = true,
   children,
   className,
 }: LogoIntroProps) {
   const stage = React.useRef<HTMLDivElement>(null)
+  const canvas = React.useRef<HTMLCanvasElement>(null)
+  const stopEmbers = React.useRef<(() => void) | null>(null)
   const [phase, setPhase] = React.useState<Phase>("waiting")
   const [skippable, setSkippable] = React.useState(false)
   const timers = React.useRef<ReturnType<typeof setTimeout>[]>([])
@@ -99,6 +108,7 @@ function LogoIntro({
     const at = heardAt ?? performance.now()
     sounding.current = heardAt !== null
     for (const animation of animations()) animation.startTime = at
+    if (canvas.current && stage.current) stopEmbers.current = embers({ canvas: canvas.current, logo: stage.current, at: at + HIT })
     setPhase("playing")
     later(at - performance.now() + 1000, () => setSkippable(true))
     later(at - performance.now() + LENGTH[cue], () => finish(FADE / 1000 + 0.6))
@@ -121,6 +131,7 @@ function LogoIntro({
     return () => {
       clearTimeout(first)
       timers.current.forEach(clearTimeout)
+      stopEmbers.current?.()
       if (sounding.current) stopLogoSound(0.3)
       sounding.current = false
     }
@@ -141,6 +152,9 @@ function LogoIntro({
       <div ref={stage} className={cn(phase === "blocked" && "invisible")}>
         {children}
       </div>
+      {cue === "framex-intro" && particles ? (
+        <canvas ref={canvas} aria-hidden className="pointer-events-none absolute inset-0 size-full mix-blend-screen" />
+      ) : null}
       {phase === "blocked" ? (
         <Button
           variant={cue === "framex-intro" ? "golden" : "default"}

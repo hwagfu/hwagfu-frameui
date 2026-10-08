@@ -27,7 +27,7 @@ const entranceProp = {
   name: "entrance",
   type: '"intro" | "reveal"',
   description:
-    "Chạy một lần khi logo xuất hiện. FrameON chỉ có `intro` (2,3 giây: góc khung vẽ ra, nút play đáp xuống, chữ trượt vào, ON bật sáng). FrameX: `reveal` (1,6 giây) hoặc `intro` — reveal sau 1,2 giây ánh sáng tụ lại, có cú nện: bùng sáng, sóng xung kích, rung nhẹ. Âm thanh: Logo Sound.",
+    "Chạy một lần khi logo xuất hiện. FrameON chỉ có `intro` (2,3 giây: góc khung vẽ ra, nút play đáp xuống, chữ trượt vào, ON bật sáng). FrameX: `reveal` (1,6 giây) hoặc `intro` — reveal sau 1,2 giây ánh sáng tụ lại, có cú nện: bùng sáng, sóng xung kích, rung nhẹ; khi chữ vừa đứng yên (2,7 giây), một vệt sáng bóng như kim loại đánh bóng quét qua logo rồi chữ FRAMEX. Âm thanh: Logo Sound.",
 }
 
 const framexProps = [
@@ -177,7 +177,7 @@ export const frameon: ComponentDoc[] = [
       {
         name: "LogoIntro",
         description:
-          "Logo trước phim, phủ lên player (`absolute inset-0`). Tự thử phát có tiếng; trình duyệt chặn thì chờ sau nút bắt đầu. Hết intro (FrameON 2,6 giây, FrameX 5,2 giây) hoặc khi bấm Bỏ qua: mờ dần 0,6 giây, gọi `onDone`, tiếng còn ngân được fade theo. Người dùng bật giảm chuyển động: vào phim ngay.",
+          "Logo trước phim, phủ lên player (`absolute inset-0`). Tự thử phát có tiếng; trình duyệt chặn thì chờ sau nút bắt đầu. FrameX có thêm bụi vàng bay lên quanh logo từ cú nện, vẽ bằng canvas theo đúng đồng hồ của âm thanh. Hết intro (FrameON 2,6 giây, FrameX 5,2 giây) hoặc khi bấm Bỏ qua: mờ dần 0,6 giây, gọi `onDone`, tiếng còn ngân được fade theo. Người dùng bật giảm chuyển động: vào phim ngay.",
         props: [
           { name: "cue", type: '"frameon-intro" | "framex-intro"', description: "Khớp với logo bên trong." },
           { name: "onDone", type: "() => void", description: "Intro xong hoặc bị bỏ qua: bắt đầu phim (`video.play()`)." },
@@ -190,6 +190,7 @@ export const frameon: ComponentDoc[] = [
           { name: "startLabel", type: "ReactNode", default: '"Xem phim"', description: "Chữ trên nút bắt đầu." },
           { name: "skipLabel", type: "ReactNode", default: '"Bỏ qua"', description: "Chữ trên nút bỏ qua." },
           { name: "volume", type: "number", default: "0.9", description: "Âm lượng 0–1." },
+          { name: "particles", type: "boolean", default: "true", description: "FrameX: bụi vàng bay lên quanh logo từ cú nện (canvas). `false` để tắt." },
           { name: "children", type: "ReactNode", description: 'Logo với `entrance="intro"`.' },
           classNameProp,
         ],
