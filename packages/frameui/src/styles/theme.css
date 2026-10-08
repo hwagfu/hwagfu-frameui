@@ -82,6 +82,27 @@
   --sidebar-accent-foreground: #ffd875;
   --sidebar-border: #2f3346;
   --sidebar-ring: #ffd875;
+
+  /* FrameX gold foil, light → deep (see the Display P3 version below). */
+  --framex-gold-0: #fff4d0;
+  --framex-gold-1: #efc766;
+  --framex-gold-2: #f8e2a2;
+  --framex-gold-3: #cf9734;
+  --framex-gold-4: #94661d;
+}
+
+/*
+ * On wide-gamut screens (most phones, Macs, HDR monitors) the FrameX gold
+ * goes past what sRGB can show: deeper and more luminous metal.
+ */
+@media (color-gamut: p3) {
+  :root {
+    --framex-gold-0: color(display-p3 1 0.96 0.8);
+    --framex-gold-1: color(display-p3 0.97 0.78 0.32);
+    --framex-gold-2: color(display-p3 1 0.9 0.58);
+    --framex-gold-3: color(display-p3 0.85 0.58 0.14);
+    --framex-gold-4: color(display-p3 0.6 0.39 0.07);
+  }
 }
 
 @theme inline {
@@ -436,25 +457,62 @@
   }
 
   /*
-   * FrameX theatre intro: light gathers for 1.2 s, flashes on the impact
-   * (72% = 1.93 s, when the play button lands), then settles.
+   * FrameX theatre intro, 3.9 s: light gathers in pulses with the heartbeat
+   * (0.35, 1.25, 1.95, 2.45, 2.8 s), dims as the sound holds its breath, and
+   * flashes on the hit (80.3% = 3.13 s, when the play button lands).
    */
   @keyframes framex-gather {
     0% {
       opacity: 0;
       transform: scale(0.4);
     }
-    44% {
-      opacity: 0.4;
+    9% {
+      opacity: 0.22;
+      transform: scale(0.62);
+    }
+    13% {
+      opacity: 0.1;
+      transform: scale(0.58);
+    }
+    32% {
+      opacity: 0.3;
+      transform: scale(0.68);
+    }
+    36% {
+      opacity: 0.16;
+      transform: scale(0.64);
+    }
+    50% {
+      opacity: 0.38;
+      transform: scale(0.74);
+    }
+    53.5% {
+      opacity: 0.22;
+      transform: scale(0.72);
+    }
+    62.8% {
+      opacity: 0.46;
+      transform: scale(0.8);
+    }
+    65.5% {
+      opacity: 0.3;
       transform: scale(0.78);
     }
-    70% {
+    71.8% {
       opacity: 0.55;
+      transform: scale(0.85);
+    }
+    77.7% {
+      opacity: 0.5;
       transform: scale(0.86);
     }
-    72% {
+    79.5% {
+      opacity: 0.12;
+      transform: scale(0.8);
+    }
+    80.3% {
       opacity: 1;
-      transform: scale(1.4);
+      transform: scale(1.45);
     }
     100% {
       opacity: 0.4;
@@ -526,8 +584,8 @@
   --animate-framex-flare-big: framex-flare-big var(--framex-cycle, 5.5s) cubic-bezier(0.2, 0.7, 0.3, 1) var(--logo-delay) infinite;
   --animate-framex-flare-once: framex-flare-once 1.1s cubic-bezier(0.2, 0.7, 0.3, 1) var(--logo-delay) backwards;
   --animate-framex-breathe: framex-breathe 3.2s ease-in-out var(--logo-delay) infinite alternate;
-  --animate-framex-gather: framex-gather 2.7s linear both;
-  --animate-framex-gather-breathe: framex-gather 2.7s linear both, framex-breathe 3.2s ease-in-out 2.7s infinite alternate;
+  --animate-framex-gather: framex-gather 3.9s linear both;
+  --animate-framex-gather-breathe: framex-gather 3.9s linear both, framex-breathe 3.2s ease-in-out 3.9s infinite alternate;
   --animate-framex-x-glow: framex-x-glow 3.2s ease-in-out var(--logo-delay) infinite alternate;
   --animate-logo-draw: logo-draw 0.9s cubic-bezier(0.65, 0, 0.35, 1) var(--logo-delay) both;
   --animate-logo-land: logo-land 0.7s cubic-bezier(0.34, 1.5, 0.64, 1) var(--logo-delay) both;
@@ -542,6 +600,124 @@
   --animate-framex-track: framex-track 1.2s cubic-bezier(0.16, 1, 0.3, 1) var(--logo-delay) both;
   --animate-framex-ring: framex-ring 1.1s cubic-bezier(0.15, 0.7, 0.3, 1) var(--logo-delay);
   --animate-framex-shake: framex-shake 0.6s linear var(--logo-delay);
+  /*
+   * The stage around the FrameX intro (LogoIntro), on the same clock: the
+   * hit lands at 3.13 s. Particles carry their own --logo-delay and
+   * --logo-duration so they all arrive on it.
+   */
+  --animate-framex-converge: framex-converge var(--logo-duration, 2s) cubic-bezier(0.5, 0, 0.85, 0.35) var(--logo-delay) both;
+  --animate-framex-dust: framex-dust var(--logo-duration, 4s) cubic-bezier(0.2, 0.6, 0.4, 1) var(--logo-delay) both;
+  --animate-framex-streak: framex-streak 4.6s linear both;
+  --animate-framex-flash: framex-flash 0.8s ease-out 3.13s;
+  --animate-framex-rays: framex-rays 6s cubic-bezier(0.2, 0.7, 0.3, 1) 3.13s both;
+  --animate-framex-push: framex-push 3.9s both;
+
+  /* Gold dust drawn in from all around, arriving on the hit. */
+  @keyframes framex-converge {
+    from {
+      opacity: 0;
+      transform: translate(var(--dx), var(--dy)) scale(1);
+    }
+    20%,
+    90% {
+      opacity: var(--glow, 0.9);
+    }
+    to {
+      opacity: 0;
+      transform: translate(0, 0) scale(0.3);
+    }
+  }
+  /* After the hit: dust lifting off the metal and drifting up. */
+  @keyframes framex-dust {
+    from {
+      opacity: 0;
+      transform: translate(var(--dx), var(--dy)) scale(0.6);
+    }
+    15% {
+      opacity: var(--glow, 0.8);
+    }
+    to {
+      opacity: 0;
+      transform: translate(calc(var(--dx) + var(--drift, 0px)), calc(var(--dy) - 32cqmin)) scale(1);
+    }
+  }
+  /* An anamorphic streak: a thin line of light that grows with the build and crosses the frame on the hit. */
+  @keyframes framex-streak {
+    0% {
+      opacity: 0;
+      transform: scaleX(0.02);
+    }
+    20% {
+      opacity: 0.12;
+      transform: scaleX(0.1);
+    }
+    65.8% {
+      opacity: 0.45;
+      transform: scaleX(0.42);
+    }
+    66.2% {
+      opacity: 0.04;
+      transform: scaleX(0.42);
+    }
+    68% {
+      opacity: 1;
+      transform: scaleX(1.05);
+    }
+    80% {
+      opacity: 0.35;
+      transform: scaleX(1.1);
+    }
+    100% {
+      opacity: 0;
+      transform: scaleX(1.15);
+    }
+  }
+  /* The whole frame lights up for an instant on the hit. */
+  @keyframes framex-flash {
+    from {
+      opacity: 0.6;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  /* Rays of light behind the mark, opening on the hit and turning slowly. */
+  @keyframes framex-rays {
+    from {
+      opacity: 0;
+      rotate: 0deg;
+      scale: 0.7;
+    }
+    6% {
+      opacity: 0.75;
+      scale: 1;
+    }
+    30% {
+      opacity: 0.3;
+    }
+    to {
+      opacity: 0.12;
+      rotate: 24deg;
+      scale: 1.05;
+    }
+  }
+  /* The camera pushes in through the build, then the hit punches the logo forward. */
+  @keyframes framex-push {
+    0% {
+      scale: 0.94;
+      animation-timing-function: ease-in;
+    }
+    80% {
+      scale: 1;
+    }
+    80.3% {
+      scale: 1.07;
+      animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    100% {
+      scale: 1;
+    }
+  }
 }
 
 /* ------------------------------------------------------------------ *

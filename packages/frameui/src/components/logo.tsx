@@ -50,13 +50,13 @@ type MarkProps = Omit<React.ComponentProps<"svg">, "children"> & {
  * play button catch the light the same way; the CSS one is for the X.
  */
 const GOLD: ReadonlyArray<readonly [number, string]> = [
-  [0, "#fff4d0"],
-  [0.3, "#efc766"],
-  [0.52, "#f8e2a2"],
-  [0.76, "#cf9734"],
-  [1, "#94661d"],
+  [0, "var(--framex-gold-0, #fff4d0)"],
+  [0.3, "var(--framex-gold-1, #efc766)"],
+  [0.52, "var(--framex-gold-2, #f8e2a2)"],
+  [0.76, "var(--framex-gold-3, #cf9734)"],
+  [1, "var(--framex-gold-4, #94661d)"],
 ]
-const GOLD_CSS = "linear-gradient(165deg, #fff4d0, #efc766 30%, #f8e2a2 52%, #cf9734 76%, #94661d)"
+const GOLD_CSS = `linear-gradient(165deg, ${GOLD.map(([offset, color]) => `${color} ${offset * 100}%`).join(", ")})`
 /** Warm ivory for "FRAME": white would leave the passing light nothing to brighten. */
 const IVORY = "#e6e0d4"
 /** The band of light on the name: a bright core with soft shoulders, 4em wide. */
@@ -81,8 +81,8 @@ type FrameXMotion = {
   /**
    * Plays once when the logo appears. `"reveal"`: the corners are drawn, the
    * play button lands, the name closes in (1.6 s). `"intro"`: the same after a
-   * 1.2 s build of light, with an impact when the play button lands — a flash,
-   * two shockwaves, a short shake. Made to sit on `<LogoSound cue="framex-intro">` (`logo-sound`).
+   * 2.4 s build of light pulsing like a heartbeat, with an impact when the
+   * play button lands (3.13 s) — a flash, two shockwaves, a short shake. Made to sit on `<LogoSound cue="framex-intro">` (`logo-sound`).
    */
   entrance?: "reveal" | "intro" | undefined
 }
@@ -120,9 +120,9 @@ const drawIn = (seconds: number) => ({
  * the keyframes themselves (theme.css) carry no timing.
  */
 function timeline({ shine, flare, glow = false, entrance }: FrameXMotion) {
-  const pre = entrance === "intro" ? 1.2 : 0
+  const pre = entrance === "intro" ? 2.4 : 0
   // Loops start once the entrance has played.
-  const start = entrance === "intro" ? 2.7 : entrance === "reveal" ? 1.5 : 0
+  const start = entrance === "intro" ? 3.9 : entrance === "reveal" ? 1.5 : 0
   const shineMode: Mode | null = shine === "hover" ? "hover" : shine ? "loop" : null
   const flareMode: Mode | null = flare === "hover" ? "hover" : flare ? "loop" : null
   // Glints ride the band when there is one; alone they walk the metal faster.
@@ -150,8 +150,9 @@ type Timeline = ReturnType<typeof timeline>
 function GoldGradient({ id }: { id: string }) {
   return (
     <linearGradient id={`${id}-gold`} x1="0" y1="0" x2="1" y2="1">
+      {/* Through `style`: SVG attributes do not read var() everywhere, CSS does. */}
       {GOLD.map(([offset, color]) => (
-        <stop key={offset} offset={offset} stopColor={color} />
+        <stop key={offset} offset={offset} style={{ stopColor: color }} />
       ))}
     </linearGradient>
   )

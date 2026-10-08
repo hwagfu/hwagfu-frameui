@@ -22,7 +22,7 @@ const BITRATE = "128k"
 /** Cue → render length in seconds (the silent tail is trimmed afterwards) and a title. */
 const CUES = {
   "frameon-intro": { secs: 8, title: "FrameON intro" },
-  "framex-intro": { secs: 15, title: "FrameX intro" },
+  "framex-intro": { secs: 18, title: "FrameX intro" },
   "framex-reveal": { secs: 9, title: "FrameX reveal" },
   "framex-hover": { secs: 8, title: "FrameX hover" },
 }
