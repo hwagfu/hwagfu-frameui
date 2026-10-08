@@ -10,11 +10,11 @@
 type LogoSoundCue =
   /** `<Wordmark entrance="intro" />` (FrameON) — 4.8 s, 77 KB. */
   | "frameon-intro"
-  /** `<Wordmark variant="framex" entrance="intro" shine flare glow />` — 12.4 s, 194 KB. */
+  /** `<Wordmark variant="framex" entrance="intro" shine flare glow />` — 10.5 s, 165 KB. */
   | "framex-intro"
   /** `entrance="reveal"` (FrameX) — 5.9 s, 93 KB. */
   | "framex-reveal"
-  /** `shine="hover" flare="hover"` (FrameX) — 6.7 s, 106 KB. */
+  /** `shine="hover" flare="hover"` (FrameX) — 6.9 s, 109 KB. */
   | "framex-hover"
 
 type LogoSoundOptions = {

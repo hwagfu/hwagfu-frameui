@@ -27,7 +27,7 @@ const entranceProp = {
   name: "entrance",
   type: '"intro" | "reveal"',
   description:
-    "Chạy một lần khi logo xuất hiện. FrameON chỉ có `intro` (2,3 giây: góc khung vẽ ra, nút play đáp xuống, chữ trượt vào, ON bật sáng). FrameX: `reveal` (1,6 giây) hoặc `intro` — reveal sau 2,4 giây ánh sáng tụ lại theo nhịp tim, cú nện ở 3,13 giây: bùng sáng, sóng xung kích, rung nhẹ. Âm thanh: Logo Sound.",
+    "Chạy một lần khi logo xuất hiện. FrameON chỉ có `intro` (2,3 giây: góc khung vẽ ra, nút play đáp xuống, chữ trượt vào, ON bật sáng). FrameX: `reveal` (1,6 giây) hoặc `intro` — reveal sau 1,2 giây ánh sáng tụ lại, có cú nện: bùng sáng, sóng xung kích, rung nhẹ. Âm thanh: Logo Sound.",
 }
 
 const framexProps = [
@@ -116,7 +116,7 @@ export const frameon: ComponentDoc[] = [
       "Trang chờ của Next.js: `app/loading.tsx` trả về `<LogoSpinner label=\"Đang tải\" />` — là Server Component nên hiện ngay trong HTML đầu tiên. Trang 404: `app/not-found.tsx` với `LogoLost`.",
       "`LogoSpinner` cùng cỡ và chiếm cùng chỗ với `LogoMark` có cùng `size`, nên thay nhau được mà bố cục không xê dịch. Khi quay, góc khung vẽ tràn ra ngoài khung khoảng 6,7% `size` mỗi cạnh (3px ở cỡ 48): đừng đặt sát mép một khối `overflow-hidden`.",
       "Favicon nên là file riêng (viewBox ôm sát, nét dày hơn) vì ở 16px nét 2.6 quá mảnh.",
-      "FrameX lấy vàng từ gradient riêng của từng nét (sáng góc trên trái, một dải sáng giữa, đậm góc dưới phải) nên không theo `currentColor`; FrameON vẫn như cũ. Năm màu vàng là biến `--framex-gold-0…4`: trên màn hình gam rộng (Display P3 — đa số điện thoại, Mac, màn HDR) chúng chuyển sang vàng ngoài gam sRGB, sâu và rực hơn.",
+      "FrameX lấy vàng từ gradient riêng của từng nét (sáng góc trên trái, một dải sáng giữa, đậm góc dưới phải) nên không theo `currentColor`; FrameON vẫn như cũ.",
       "Hiệu ứng FrameX tràn ra ngoài khung (hào quang, đốm lóe, sóng xung kích): chừa chỗ quanh logo, đừng đặt trong khối `overflow-hidden` sát mép.",
       "Ở header chỉ nên dùng `shine=\"hover\" flare=\"hover\"`: hiệu ứng tự lặp ở cỡ nhỏ làm rối giao diện. `entrance` hợp với màn hình riêng của logo, như trang giới thiệu gói hay \"nâng cấp thành công\" — chữ đổi khoảng cách khi xuất hiện nên bề rộng logo thay đổi trong khoảng 1 giây.",
       "Mọi hiệu ứng là CSS: tắt khi hệ điều hành bật giảm chuyển động, logo hiện ngay ở trạng thái cuối.",
@@ -128,7 +128,7 @@ export const frameon: ComponentDoc[] = [
     group: "FrameON",
     runtime: "island",
     description:
-      "Âm thanh cho logo: MP3 dựng sẵn, mỗi cue một module, trang nào dùng mới tải. FrameON: hợp âm ấm, nhịp trầm, vệt gió, hai tiếng chuông. FrameX: intro kiểu rạp — tích tụ hồi hộp, khoảng lặng, cú nện trầm và ngân, hợp xướng, đàn hạc, âm vòm 8D xoay quanh đầu. Logo vẫn là Server Component; chỉ lớp bọc LogoSound chạy trên client.",
+      "Âm thanh cho logo: MP3 dựng sẵn, mỗi cue một module, trang nào dùng mới tải. FrameON: hợp âm ấm, nhịp trầm, vệt gió, hai tiếng chuông. FrameX: intro kiểu rạp IMAX/4DX — rung ghế, khoảng lặng, cú nện, đàn hạc, âm vòm 3D. Logo vẫn là Server Component; chỉ lớp bọc LogoSound chạy trên client.",
     imports: 'import { LogoIntro, LogoSound, playLogoSound } from "@hwagfu/frameui/logo-sound"',
     examples: [
       {
@@ -141,7 +141,7 @@ export const frameon: ComponentDoc[] = [
         file: "logo-sound-framex",
         title: "Intro FrameX",
         description:
-          "Tích tụ 3 giây gần như từ im lặng: áp suất siêu trầm, nhịp tim dồn dần, Shepard tone dâng mãi không tới, ghế rạp rung, luồng gió vòng từ dưới-sau ra trước, tiếng vang đảo ngược hút vào → khoảng lặng thật 0,15 giây → cú nện ở 3,13 giây khi nút play đáp xuống (bass tụt sâu, kèn đồng, sub và cồng ngân vài giây) → đàn hạc vòng qua đỉnh đầu khi chữ hiện, pha lê và hợp xướng xoay quanh người nghe → vệt sáng lướt ngang trước mặt → hai tiếng chuông ở hai điểm 3D → hợp âm kết. Dùng trong `LogoIntro` thì có thêm sân khấu: bụi vàng hội tụ, vệt lens flare ngang, chớp sáng, tia sáng, bụi bay lên.",
+          "Tích tụ 1,2 giây (rung trầm như ghế rạp rung, luồng gió vòng từ sau ra trước, cao độ hội tụ về một hợp âm) → khoảng lặng ~0,1 giây → cú nện khi nút play đáp xuống (bass tụt sâu, kèn đồng, sóng xung kích, logo rung) → đàn hạc khi chữ hiện → vệt sáng lướt ngang trước mặt → hai tiếng chuông kim loại ở hai đốm lóe → hợp âm kết.",
       },
       {
         file: "logo-sound-frameon",
@@ -177,7 +177,7 @@ export const frameon: ComponentDoc[] = [
       {
         name: "LogoIntro",
         description:
-          "Logo trước phim, phủ lên player (`absolute inset-0`). Tự thử phát có tiếng; trình duyệt chặn thì chờ sau nút bắt đầu. Hết intro (FrameON 2,6 giây, FrameX 6,6 giây) hoặc khi bấm Bỏ qua: mờ dần 0,6 giây, gọi `onDone`, tiếng còn ngân được fade theo. Người dùng bật giảm chuyển động: vào phim ngay.",
+          "Logo trước phim, phủ lên player (`absolute inset-0`). Tự thử phát có tiếng; trình duyệt chặn thì chờ sau nút bắt đầu. Hết intro (FrameON 2,6 giây, FrameX 5,2 giây) hoặc khi bấm Bỏ qua: mờ dần 0,6 giây, gọi `onDone`, tiếng còn ngân được fade theo. Người dùng bật giảm chuyển động: vào phim ngay.",
         props: [
           { name: "cue", type: '"frameon-intro" | "framex-intro"', description: "Khớp với logo bên trong." },
           { name: "onDone", type: "() => void", description: "Intro xong hoặc bị bỏ qua: bắt đầu phim (`video.play()`)." },
@@ -198,7 +198,7 @@ export const frameon: ComponentDoc[] = [
         name: "Cue · prop của logo",
         props: [
           { name: '"frameon-intro"', type: "4,8 s · 77 KB", description: '`<Wordmark entrance="intro" />`' },
-          { name: '"framex-intro"', type: "12,4 s · 194 KB", description: '`<Wordmark variant="framex" entrance="intro" shine flare glow />`' },
+          { name: '"framex-intro"', type: "10,5 s · 165 KB", description: '`<Wordmark variant="framex" entrance="intro" shine flare glow />`' },
           { name: '"framex-reveal"', type: "5,9 s · 93 KB", description: '`entrance="reveal"` (FrameX)' },
           { name: '"framex-hover"', type: "6,9 s · 109 KB", description: '`shine="hover" flare="hover"` (FrameX) — tiếng chính 1,5 giây, phần còn lại là tiếng vang tắt dần.' },
         ],
@@ -228,7 +228,6 @@ export const frameon: ComponentDoc[] = [
       "Tiếng được tổng hợp một lần bằng Web Audio (`packages/frameui/scripts/sounds/engine.ts`) rồi encode ra MP3 128 kbps; trình duyệt chỉ giải mã một lần rồi phát — không tổng hợp gì lúc chạy, nghe giống hệt nhau trên mọi máy. File MP3 gốc nằm ở `packages/frameui/sounds/` (dùng được cho video). Sửa tiếng: sửa engine rồi chạy `pnpm --filter @hwagfu/frameui sounds`.",
       "MP3 nằm trong module JS dạng data URI nên đi được cả qua npm lẫn shadcn registry, không cần cấu hình bundler; mỗi cue là một chunk riêng, chỉ tải khi trang dùng đến.",
       "FrameON ở giọng Rê, FrameX ở giọng Mi — cao hơn một cung, đúng nghĩa \"nâng cấp\".",
-      "Âm vòm \"8D\" là âm thanh hai kênh dựng bằng HRTF: pha lê, hợp xướng, đàn hạc, cồng và tiếng chuông có vị trí và chuyển động quanh đầu (cả cao thấp), dải trầm giữ ở giữa. Rõ nhất khi đeo tai nghe. Intro FrameX mix ở khoảng −17 LUFS, đỉnh dưới −1 dBFS, chênh lệch to–nhỏ lớn như âm thanh rạp — không to hơn hẳn tiếng phim theo sau.",
       "Âm vòm 3D (HRTF) và dải trầm chỉ nghe rõ qua tai nghe. Loa điện thoại không phát được dưới khoảng 80 Hz, nên dải trầm được làm méo nhẹ để sinh bội âm cao hơn — loa nhỏ vẫn cảm được độ nặng.",
       "Âm thanh chỉ phát một lần mỗi lượt; vòng lặp ánh sáng sau đó không có tiếng.",
       "Không có cách nào ép trình duyệt phát tiếng khi người xem chưa bấm hay gõ phím trên trang — phim cũng vậy. Trên trang xem phim, intro đi chung cú bấm với phim: chuyển trang bằng `<Link>` (client navigation) sau nút \"Xem\" thì trình duyệt vẫn nhớ cú bấm và intro có tiếng ngay; mở link thẳng thì `LogoIntro` hiện nút \"Xem phim\". Ngoài ra trình duyệt tự cho phép với trang người dùng đã cho phép âm thanh, web app đã cài, trang hay xem media (Chrome), kiosk và WebView cấu hình sẵn.",

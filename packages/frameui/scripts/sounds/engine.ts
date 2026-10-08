@@ -26,7 +26,7 @@
 type LogoSoundCue =
   /** With `<Wordmark entrance="intro" />` (FrameON): about 2.5 s. */
   | "frameon-intro"
-  /** With `<Wordmark variant="framex" entrance="intro" shine flare glow />`: about 12 s. */
+  /** With `<Wordmark variant="framex" entrance="intro" shine flare glow />`: about 9 s. */
   | "framex-intro"
   /** With `entrance="reveal"` (FrameX): a short rise, a lighter hit, the harp. */
   | "framex-reveal"
@@ -79,19 +79,8 @@ function createLogoSound(
   // ------------------------------------------------------------ master
   const output = new GainNode(ctx, { gain: volume })
   const limiter = new DynamicsCompressorNode(ctx, { threshold: -2, knee: 0, ratio: 20, attack: 0.001, release: 0.12 })
-  // Everything — dry voices and reverb returns — meets in `glue`, a gain the
-  // intro can pull down for the silence before its hit, then the compressor.
-  const glue = new GainNode(ctx, { gain: 1 })
-  const compressor = new DynamicsCompressorNode(ctx, { threshold: -20, knee: 10, ratio: 2.5, attack: 0.012, release: 0.3 })
-  glue.connect(compressor).connect(limiter).connect(output).connect(destination)
-
-  /** True silence from `from` to `to`, reverb tails included: the breath held before a hit. */
-  const hold = (from: number, to: number) => {
-    glue.gain.setValueAtTime(1, from)
-    glue.gain.linearRampToValueAtTime(0.02, from + 0.03)
-    glue.gain.setValueAtTime(0.02, to - 0.004)
-    glue.gain.linearRampToValueAtTime(1, to)
-  }
+  const glue = new DynamicsCompressorNode(ctx, { threshold: -20, knee: 10, ratio: 2.5, attack: 0.012, release: 0.3 })
+  glue.connect(limiter).connect(output).connect(destination)
 
   const gain = (value = 1) => new GainNode(ctx, { gain: value })
 
@@ -211,45 +200,23 @@ function createLogoSound(
 
   /**
    * A point source moving around the listener (HRTF). `path(p)` gives
-   * [angle°, distance, elevation°] for p in 0..1 — 0° ahead, 90° right,
-   * 180° behind; elevation 90° overhead, −90° below.
+   * [angle°, distance] for p in 0..1 — 0° ahead, 90° right, 180° behind.
    */
-  const around = (
-    t: number,
-    dur: number,
-    path: (p: number) => readonly [number, number] | readonly [number, number, number]
-  ) => {
+  const around = (t: number, dur: number, path: (p: number) => readonly [number, number]) => {
     const p = new PannerNode(ctx, { panningModel: "HRTF", distanceModel: "inverse", refDistance: 1, rolloffFactor: 1 })
-    const n = 128
+    const n = 64
     const xs = new Float32Array(n)
-    const ys = new Float32Array(n)
     const zs = new Float32Array(n)
     for (let i = 0; i < n; i++) {
-      const [deg, dist, elev = 0] = path(i / (n - 1))
+      const [deg, dist] = path(i / (n - 1))
       const a = (deg * Math.PI) / 180
-      const e = (elev * Math.PI) / 180
-      xs[i] = Math.sin(a) * Math.cos(e) * dist
-      ys[i] = Math.sin(e) * dist
-      zs[i] = -Math.cos(a) * Math.cos(e) * dist
+      xs[i] = Math.sin(a) * dist
+      zs[i] = -Math.cos(a) * dist
     }
     p.positionX.setValueCurveAtTime(xs, t, dur)
-    p.positionY.setValueCurveAtTime(ys, t, dur)
     p.positionZ.setValueCurveAtTime(zs, t, dur)
     return p
   }
-
-  /**
-   * "8D": a source circling the listener — `turns` revolutions from angle
-   * `from`, drifting up by `rise`° and swaying ±`sway`° in height.
-   */
-  const orbit = (
-    t: number,
-    dur: number,
-    { turns = 1, from = 0, dist = 1.6, rise = 0, sway = 0 }: { turns?: number; from?: number; dist?: number; rise?: number; sway?: number }
-  ) => around(t, dur, (p) => [from + 360 * turns * p, dist, rise * p + sway * Math.sin(3 * Math.PI * p)])
-
-  /** A source fixed at [angle°, elevation°], for `dur` seconds. */
-  const at = (t: number, dur: number, deg: number, elev: number, dist = 1.3) => around(t, dur, () => [deg, dist, elev])
 
   // ------------------------------------------------------------ FrameON voices (D)
 
@@ -305,20 +272,10 @@ function createLogoSound(
   // ------------------------------------------------------------ shared: struck metal
 
   /** A bell at stereo `place` (-1…1): inharmonic partials of a struck bar, a stereo pair, sparkles. */
-  function bell(
-    t: number,
-    notes: readonly number[],
-    level: number,
-    place: number,
-    { big = false, hallSend = true, spot }: { big?: boolean; hallSend?: boolean; spot?: readonly [number, number] } = {}
-  ) {
+  function bell(t: number, notes: readonly number[], level: number, place: number, { big = false, hallSend = true } = {}) {
     const r = seeded((notes[0] ?? 0) + (big ? 100 : 0))
     const stretch = big ? 1.35 : 1
     const space = hallSend ? hall : room
-    // A point in 3D (angle°, elevation°) instead of a stereo place. Every
-    // partial meets in it, so it is sent on once — not once per partial.
-    const point = spot ? at(t, 6, spot[0], spot[1]) : null
-    if (point) send(point, 0.6, 0.6, big ? 0.3 : 0.12, space)
     notes.forEach((note, n) => {
       const s = t + n * 0.03
       const partials: readonly (readonly [number, number, number])[] = hallSend
@@ -345,8 +302,8 @@ function createLogoSound(
             [0.003, (level * amp) / 2],
             [decay * stretch, 0.0001],
           ])
-          if (point) o.connect(g).connect(point)
-          else send(o.connect(g).connect(pan(place + side * 0.25)), 0.6, 0.6, hallSend ? (big ? 0.3 : 0.12) : 0, space)
+          const p = o.connect(g).connect(pan(place + side * 0.25))
+          send(p, 0.6, 0.6, hallSend ? (big ? 0.3 : 0.12) : 0, space)
         }
       }
     })
@@ -360,9 +317,10 @@ function createLogoSound(
         [0.18, 0.0001],
       ])
       const note = glitter[Math.floor(r() * glitter.length)] ?? 100
-      const voice = osc("sine", hz(note), s, 0.2).connect(g)
-      if (point) voice.connect(point)
-      else send(voice.connect(pan(place + (r() - 0.5) * 1.2)), 0.5, 0.6, 0, space)
+      const p = osc("sine", hz(note), s, 0.2)
+        .connect(g)
+        .connect(pan(place + (r() - 0.5) * 1.2))
+      send(p, 0.5, 0.6, 0, space)
     }
   }
 
@@ -417,7 +375,7 @@ function createLogoSound(
     g.gain.setTargetAtTime(0.0001, end, 0.01)
     src.connect(hp).connect(g)
     src.connect(bp).connect(gain(0.6)).connect(g)
-    const pos = g.connect(around(t, dur, (p) => [180 + 180 * p, 2.4 - 1.4 * p, -35 + 45 * p]))
+    const pos = g.connect(around(t, dur, (p) => [180 + 180 * p, 2.4 - 1.4 * p]))
     send(pos, 1, 0.25)
   }
 
@@ -519,11 +477,8 @@ function createLogoSound(
     }
   }
 
-  /**
-   * Harp glissando up the E major pentatonic, left to right like the letters;
-   * `arc`: in 3D, rising from front-left over the head to front-right.
-   */
-  function harp(t: number, dur = 0.55, level = 0.16, arc = false) {
+  /** Harp glissando up the E major pentatonic, left to right like the letters. */
+  function harp(t: number, dur = 0.55, level = 0.16) {
     const notes = [E5, Fs5, 80, B5, 85, E6, 90, 92, B6, 97, E7]
     notes.forEach((note, i) => {
       const s = t + (dur * i) / (notes.length - 1)
@@ -538,18 +493,15 @@ function createLogoSound(
       osc("sine", hz(note) * 2, s, decay + 0.1)
         .connect(gain(0.25))
         .connect(lp)
-      const k = i / (notes.length - 1)
-      const p = lp
-        .connect(g)
-        .connect(arc ? at(s, decay + 0.2, -70 + 140 * k, -10 + 60 * Math.sin(Math.PI * k)) : pan(-0.7 + 1.4 * k))
+      const p = lp.connect(g).connect(pan(-0.7 + (1.4 * i) / (notes.length - 1)))
       send(p, 1, 0.7)
     })
   }
 
-  /** Crystal air: a high cluster that breathes, mostly reverb; `swirl`: each voice circles the head (8D). */
-  function shimmer(t: number, dur: number, level = 0.035, swirl = false) {
+  /** Crystal air: a high cluster that breathes, mostly reverb. */
+  function shimmer(t: number, dur: number, level = 0.035) {
     const r = seeded(5)
-    for (const [k, note] of [E6, 92, B6, 99, 102].entries()) {
+    for (const note of [E6, 92, B6, 99, 102]) {
       const trem = gain(0.7)
       osc("sine", 3.1 + r() * 2.2, t, dur + 0.2)
         .connect(gain(0.3))
@@ -562,11 +514,7 @@ function createLogoSound(
       const p = osc("sine", hz(note), t, dur + 0.2)
         .connect(trem)
         .connect(g)
-        .connect(
-          swirl
-            ? orbit(t, dur, { turns: (k % 2 ? -1 : 1) * (1.2 + k * 0.25), from: k * 72, dist: 1.5, sway: 25 })
-            : pan((r() * 2 - 1) * 0.8)
-        )
+        .connect(pan((r() * 2 - 1) * 0.8))
       send(p, 0.3, 1)
     }
   }
@@ -611,165 +559,6 @@ function createLogoSound(
     send(g, 0.7, 0.8)
   }
 
-  // ------------------------------------------------------------ FrameX theatre intro: the long build and the long ring
-
-  /** Pressure: a low fifth (31 + 46.5 Hz) swelling out of silence under the build. Cut at `end`. */
-  function pressure(t: number, end: number, level = 0.5) {
-    for (const [f, a] of [
-      [31, 1],
-      [46.5, 0.55],
-    ] as const) {
-      const g = gain()
-      env(g.gain, t, [[end - t, level * a]])
-      g.gain.setTargetAtTime(0.0001, end, 0.01)
-      osc("sine", f, t, end - t + 0.1).connect(g)
-      send(g)
-      // What small speakers can play of it — soft, so it reads as weight, not hum.
-      g.connect(shaper(2.5)).connect(lowpass(280)).connect(gain(0.12)).connect(glue)
-    }
-  }
-
-  /** A heartbeat: lub-dub, low, dry and centred. */
-  function heartbeat(t: number, level: number) {
-    for (const [dt, l, f] of [
-      [0, 1, 78],
-      [0.17, 0.6, 66],
-    ] as const) {
-      const o = osc("sine", f, t + dt, 0.45)
-      o.frequency.exponentialRampToValueAtTime(38, t + dt + 0.18)
-      const g = gain()
-      env(g.gain, t + dt, [
-        [0.008, level * l],
-        [0.35, 0.0001],
-      ])
-      o.connect(g)
-      send(g, 1, 0.08)
-      g.connect(shaper(3)).connect(lowpass(600)).connect(gain(0.25)).connect(glue)
-    }
-  }
-
-  /**
-   * Shepard–Risset glissando: octaves climbing without end, each faded in
-   * and out along the spectrum so none is heard arriving — tension that only
-   * the hit releases. It circles the listener once on the way. Cut at `end`.
-   */
-  function shepard(t: number, end: number, level = 0.12) {
-    const dur = end - t
-    const voices = 7
-    const n = 256
-    const bus = gain()
-    env(bus.gain, t, [[dur - 0.02, level]])
-    bus.gain.setTargetAtTime(0.0001, end, 0.01)
-    send(bus.connect(orbit(t, dur, { turns: 1, from: 180, dist: 1.8, rise: 30 })), 1, 0.35)
-    for (let k = 0; k < voices; k++) {
-      const freqs = new Float32Array(n)
-      const amps = new Float32Array(n)
-      for (let i = 0; i < n; i++) {
-        // 1.5 octaves up over the build; the Gaussian hides each voice's wrap at the edges.
-        const octave = (k + (1.5 * i) / (n - 1)) % voices
-        freqs[i] = 40 * 2 ** octave
-        amps[i] = Math.exp(-((octave - voices / 2) ** 2) / 2.2) / 3
-      }
-      const o = new OscillatorNode(ctx, { type: "triangle" })
-      o.frequency.setValueCurveAtTime(freqs, t, dur)
-      const g = new GainNode(ctx, { gain: 0 })
-      g.gain.setValueCurveAtTime(amps, t, dur)
-      o.connect(g).connect(bus)
-      o.start(t)
-      o.stop(end + 0.1)
-    }
-  }
-
-  /** The hall's own tail, backwards: the room breathing in before the hit. Ends at `end`. */
-  function reverseSwell(end: number, dur = 2, level = 0.45) {
-    const ir = hall().buffer
-    if (!ir) return
-    const skip = Math.floor(rate * 0.04) // past the pre-delay and early reflections
-    const len = Math.min(ir.length - skip, Math.floor(rate * dur))
-    const buffer = ctx.createBuffer(2, len, rate)
-    for (let c = 0; c < 2; c++) {
-      const from = ir.getChannelData(c)
-      const to = buffer.getChannelData(c)
-      let peak = 0
-      for (let i = 0; i < len; i++) peak = Math.max(peak, Math.abs((to[i] = from[skip + len - 1 - i] ?? 0)))
-      for (let i = 0; i < len; i++) to[i] = (to[i] ?? 0) / (peak || 1)
-    }
-    const t = end - len / rate
-    const lp = lowpass(700)
-    lp.frequency.setValueAtTime(700, t)
-    lp.frequency.exponentialRampToValueAtTime(9000, end)
-    const g = gain()
-    env(g.gain, t, [[len / rate, level]])
-    g.gain.setTargetAtTime(0.0001, end, 0.008)
-    const source = new AudioBufferSourceNode(ctx, { buffer })
-    source.connect(new BiquadFilterNode(ctx, { type: "highpass", frequency: 180 })).connect(lp).connect(g)
-    send(g)
-    source.start(t)
-  }
-
-  /** What rings on after the hit: a sub you feel for seconds, and a gong that swells and circles the room. */
-  function bloom(t: number, level = 1) {
-    const sub = gain()
-    env(sub.gain, t, [
-      [0.05, 0.3 * level],
-      [4.8, 0.0001],
-    ])
-    osc("sine", hz(28), t, 5).connect(sub) // E1
-    send(sub)
-    sub.connect(shaper(3)).connect(lowpass(700)).connect(gain(0.12)).connect(glue)
-
-    const r = seeded(77)
-    const bus = gain()
-    env(bus.gain, t, [
-      [0.45, 0.08 * level],
-      [6.5, 0.0001],
-    ])
-    send(bus.connect(orbit(t, 6.5, { turns: 0.75, from: -40, dist: 1.4, rise: 15, sway: 10 })), 0.7, 0.8)
-    // Tam-tam: inharmonic partials over E2, each beating slowly.
-    ;[1, 1.47, 2.09, 2.56, 3.18, 3.98, 4.82, 5.71].forEach((ratio, i) => {
-      const o = osc("sine", hz(E2) * ratio, t, 7)
-      o.detune.value = (r() - 0.5) * 8
-      const trem = gain(0.8)
-      osc("sine", 0.7 + r() * 1.5, t, 7)
-        .connect(gain(0.2))
-        .connect(trem.gain)
-      o.connect(trem)
-        .connect(gain(1 / (1 + i * 0.6)))
-        .connect(bus)
-    })
-  }
-
-  /** A wordless choir ("aah"): sawtooth voices through vowel formants, two halves circling the head. */
-  function choir(t: number, dur: number, level = 0.07) {
-    const notes = [E3, B3, 63, 66, Gs4, B4] // Emaj9
-    for (const side of [-1, 1]) {
-      const bus = gain()
-      bus.gain.setValueAtTime(0.0001, t)
-      bus.gain.exponentialRampToValueAtTime(level, t + 1.6)
-      bus.gain.setValueAtTime(level, t + dur - 2.6)
-      bus.gain.exponentialRampToValueAtTime(0.0001, t + dur)
-      send(bus.connect(orbit(t, dur, { turns: side * 0.5, from: side * 70, dist: 1.5, sway: 15 })), 0.6, 1)
-      const voices = gain()
-      const vibrato = osc("sine", 4.6 + side * 0.4, t, dur + 0.1).connect(gain(6))
-      for (const note of notes) {
-        for (const cents of [-7, 0, 7]) {
-          const o = osc("sawtooth", hz(note), t, dur + 0.1)
-          o.detune.value = cents + side * 3
-          vibrato.connect(o.detune)
-          o.connect(gain(1 / (notes.length * 3))).connect(voices)
-        }
-      }
-      // Formants of an open "a".
-      for (const [f, a, Q] of [
-        [800, 1, 6],
-        [1150, 0.6, 8],
-        [2900, 0.25, 10],
-      ] as const) {
-        voices.connect(new BiquadFilterNode(ctx, { type: "bandpass", frequency: f, Q })).connect(gain(a * 2)).connect(bus)
-      }
-    }
-  }
-
   // ------------------------------------------------------------ cues
 
   const D6 = 86
@@ -783,30 +572,19 @@ function createLogoSound(
       bell(t + 1.35, [D6], 0.16, -0.2, { hallSend: false })
       bell(t + 1.55, [A6], 0.2, 0.35, { hallSend: false })
     },
-    // Timed on `entrance="intro" shine flare glow`: a 2.4 s build, the hit at 3.13 s
-    // as the play button lands, light loops from 3.9 s, glints at 4.67 s and 5.57 s.
+    // Timed on `entrance="intro" shine flare glow`: pre-roll 1.2 s, impact at 1.93 s, loops from 2.7 s.
     "framex-intro": (t) => {
-      const hit = t + 3.13
-      // Build: pressure, a quickening heartbeat, a rise that never arrives.
-      pressure(t, hit - 0.12, 0.35)
-      ;[0.35, 1.25, 1.95, 2.45, 2.8].forEach((at, i) => heartbeat(t + at, 0.16 + i * 0.08))
-      shepard(t + 0.5, hit - 0.12, 0.2)
-      converge(t + 0.9, hit, 0.2)
-      riser(t + 1.3, hit, 0.26)
-      rumble(t + 1.5, hit, 0.7)
-      reverseSwell(hit - 0.12, 2, 0.3)
-      hold(hit - 0.15, hit)
-      // The hit, and what rings on.
+      const hit = t + 1.93
+      rumble(t, hit)
+      riser(t + 0.25, hit)
+      converge(t, hit)
       impact(hit)
-      bloom(hit)
-      // Luxe, all around the listener.
-      harp(hit + 0.09, 0.55, 0.12, true)
-      shimmer(hit + 0.07, 7, 0.035, true)
-      choir(hit + 0.35, 7.5, 0.35)
-      sweep(t + 3.9, 1.9, 0.32)
-      bell(t + 4.67, [E6], 0.2, -0.35, { spot: [-40, -20] })
-      bell(t + 5.57, [B6, E7], 0.24, 0.4, { big: true, spot: [40, 30] })
-      resolve(t + 5.5, 5, 0.1)
+      harp(t + 2.02)
+      shimmer(t + 2, 6.2)
+      sweep(t + 2.7, 1.9)
+      bell(t + 3.47, [E6], 0.2, -0.35)
+      bell(t + 4.37, [B6, E7], 0.24, 0.4, { big: true })
+      resolve(t + 4.3)
     },
     "framex-reveal": (t) => {
       const hit = t + 0.73
