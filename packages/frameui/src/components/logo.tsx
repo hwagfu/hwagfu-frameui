@@ -2,6 +2,7 @@ import * as React from "react"
 
 import { renderElement, type useRender } from "../lib/render"
 import { cn } from "../lib/utils"
+import { FrameXDust } from "./_logo-dust-client"
 
 /*
  * Geometry of the FrameON mark. These three strokes are the whole logo, and
@@ -62,8 +63,31 @@ const IVORY = "#e6e0d4"
 /** The band of light on the name: a bright core with soft shoulders, 4em wide. */
 const BAND_CSS =
   "linear-gradient(110deg, transparent 22%, rgb(255 253 245 / 0.72) 42%, #fffdf5 50%, rgb(255 253 245 / 0.72) 58%, transparent 78%)"
+/**
+ * The intro's splash of light, as polished metal shows it: a white-hot
+ * highlight, a dark reflection right behind it, a second softer highlight.
+ * Stops are [offset, colour, opacity], shared by the mark (SVG) and the name (CSS).
+ */
+const GLOSS: ReadonlyArray<readonly [number, string, number]> = [
+  [0, "#fffaf0", 0],
+  [0.24, "#fffaf0", 0.22],
+  [0.38, "#fffefa", 1],
+  [0.46, "#fff3d6", 0.85],
+  [0.52, "#5c3f15", 0.6],
+  [0.59, "#ffefc8", 0.75],
+  [0.72, "#fffaf0", 0.16],
+  [1, "#fffaf0", 0],
+]
+const GLOSS_CSS = `linear-gradient(105deg, ${GLOSS.map(([at, color, alpha]) => {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(color.slice(i, i + 2), 16))
+  return `rgb(${r} ${g} ${b} / ${alpha}) ${at * 100}%`
+}).join(", ")})`
 
-/** Motion of the FrameX logo. Everything is CSS on the server-rendered SVG — no JavaScript. */
+/**
+ * Motion of the FrameX logo. Everything is CSS on the server-rendered SVG — no
+ * JavaScript — except the intro's gold dust, a small client canvas kept on the
+ * same CSS timeline.
+ */
 type FrameXMotion = {
   /**
    * A band of light crosses the mark, then the name, and rests: every 5.5 s.
@@ -82,7 +106,10 @@ type FrameXMotion = {
    * Plays once when the logo appears. `"reveal"`: the corners are drawn, the
    * play button lands, the name closes in (1.6 s). `"intro"`: the same after a
    * 1.2 s build of light, with an impact when the play button lands — a flash,
-   * two shockwaves, a short shake. Made to sit on `<LogoSound cue="framex-intro">` (`logo-sound`).
+   * two shockwaves, a short shake, gold dust drifting up around the Wordmark —
+   * then, as the name settles (2.7 s), one glossy splash of light across the
+   * metal of the mark and the name.
+   * Made to sit on `<LogoSound cue="framex-intro">` (`logo-sound`).
    */
   entrance?: "reveal" | "intro" | undefined
 }
@@ -142,6 +169,8 @@ function timeline({ shine, flare, glow = false, entrance }: FrameXMotion) {
     flareBr: flareMode === "hover" ? 0.5 : withBand ? start + 0.55 : start + 0.5,
     flareX: flareMode === "hover" ? 1.15 : withBand ? start + 1.45 : start + 1.05,
     breathe: start,
+    /** The intro's one glossy splash, as the name settles; on the name it follows a little later. */
+    splash: entrance === "intro" ? start : null,
   }
 }
 type Timeline = ReturnType<typeof timeline>
@@ -164,6 +193,29 @@ function GlowGradient({ id }: { id: string }) {
       <stop offset="0.55" stopColor="#f0c766" stopOpacity="0.12" />
       <stop offset="1" stopColor="#f0c766" stopOpacity="0" />
     </radialGradient>
+  )
+}
+
+/** The splash's band (across, objectBoundingBox), and the glow of its light spilling just past the metal. */
+function GlossGradients({ id }: { id: string }) {
+  return (
+    <>
+      <linearGradient id={`${id}-gloss`}>
+        {GLOSS.map(([offset, color, alpha]) => (
+          <stop key={offset} offset={offset} stopColor={color} stopOpacity={alpha} />
+        ))}
+      </linearGradient>
+      <filter id={`${id}-spill`} filterUnits="userSpaceOnUse" x="-8" y="-8" width="48" height="48">
+        <feGaussianBlur stdDeviation="0.7" result="near" />
+        <feGaussianBlur stdDeviation="2.4" result="far" />
+        <feColorMatrix in="far" values="1 0 0 0 0  0 0.86 0 0 0  0 0 0.6 0 0  0 0 0 1.25 0" result="warm" />
+        <feMerge>
+          <feMergeNode in="warm" />
+          <feMergeNode in="near" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </>
   )
 }
 
@@ -239,6 +291,7 @@ function FrameXMark({
   const id = React.useId()
   const { shine, flare, glow, entrance, pre } = motion
   const intro = entrance === "intro"
+  const splash = motion.splash !== null
   const gold = `url(#${id}-gold)`
   const moving = Boolean(shine || flare || glow || entrance)
   const hover = shine === "hover" || flare === "hover"
@@ -266,23 +319,24 @@ function FrameXMark({
         {glow || intro ? <GlowGradient id={id} /> : null}
         {flare ? <GlintGradients id={id} /> : null}
         {shine ? (
-          <>
-            <linearGradient id={`${id}-band`}>
-              <stop offset="0" stopColor="#fff" stopOpacity="0" />
-              <stop offset="0.38" stopColor="#fffaf0" stopOpacity="0.55" />
-              <stop offset="0.5" stopColor="#fff" />
-              <stop offset="0.62" stopColor="#fffaf0" stopOpacity="0.55" />
-              <stop offset="1" stopColor="#fff" stopOpacity="0" />
-            </linearGradient>
-            {/* The band only lights the metal: the strokes, in white, are its mask. */}
-            <mask id={`${id}-metal`} maskUnits="userSpaceOnUse" x="-4" y="-4" width="40" height="40">
-              <g {...frameStroke} stroke="#fff">
-                <path d={FRAME_TL} />
-                <path d={FRAME_BR} />
-              </g>
-              <path d={PLAY} fill="#fff" />
-            </mask>
-          </>
+          <linearGradient id={`${id}-band`}>
+            <stop offset="0" stopColor="#fff" stopOpacity="0" />
+            <stop offset="0.38" stopColor="#fffaf0" stopOpacity="0.55" />
+            <stop offset="0.5" stopColor="#fff" />
+            <stop offset="0.62" stopColor="#fffaf0" stopOpacity="0.55" />
+            <stop offset="1" stopColor="#fff" stopOpacity="0" />
+          </linearGradient>
+        ) : null}
+        {splash ? <GlossGradients id={id} /> : null}
+        {shine || splash ? (
+          // The light only shows on the metal: the strokes, in white, are its mask.
+          <mask id={`${id}-metal`} maskUnits="userSpaceOnUse" x="-4" y="-4" width="40" height="40">
+            <g {...frameStroke} stroke="#fff">
+              <path d={FRAME_TL} />
+              <path d={FRAME_BR} />
+            </g>
+            <path d={PLAY} fill="#fff" />
+          </mask>
         ) : null}
       </defs>
 
@@ -347,6 +401,24 @@ function FrameXMark({
               )}
               style={delay(motion.band)}
             />
+          </g>
+        </g>
+      ) : null}
+      {splash ? (
+        // The filter blurs what the mask let through: the lit metal glows past its edges.
+        <g filter={`url(#${id}-spill)`}>
+          <g mask={`url(#${id}-metal)`}>
+            <g transform="rotate(22 16 16)">
+              <rect
+                x="0"
+                y="-12"
+                width="14"
+                height="56"
+                fill={`url(#${id}-gloss)`}
+                className="[transform:translateX(-20px)] animate-framex-gloss motion-reduce:animate-none"
+                style={delay(motion.splash ?? 0)}
+              />
+            </g>
           </g>
         </g>
       ) : null}
@@ -560,8 +632,44 @@ const filledText = (base: string, shine: boolean): React.CSSProperties => ({
 const sweepClass = (mode: Mode) =>
   cn("motion-reduce:animate-none", mode === "hover" ? "motion-safe:group-hover/framex:animate-framex-sweep-once" : "animate-framex-sweep")
 
+/** The splash on the name: a copy of the text, filled by the light alone, glowing where it is lit. */
+const glossText: React.CSSProperties = {
+  color: "transparent",
+  WebkitBackgroundClip: "text",
+  backgroundClip: "text",
+  backgroundImage: GLOSS_CSS,
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "3.5em 100%",
+  backgroundPosition: "-3.5em 0",
+  filter: "drop-shadow(0 0 0.06em rgb(255 248 228 / 0.95)) drop-shadow(0 0 0.4em rgb(255 204 112 / 0.75))",
+}
+
 /** "FRAMEX": wide uppercase, ivory "FRAME" and a gold "X" that carries the last glint. */
 function FrameXName({ motion, children }: { motion: Timeline; children: React.ReactNode }) {
+  if (motion.splash === null) return <FrameXLetters motion={motion}>{children}</FrameXLetters>
+  // Letters and their lit copy share one grid cell, laid out alike, so every glyph lands on its twin.
+  return (
+    <span className="inline-grid">
+      <span className="[grid-area:1/1]">
+        <FrameXLetters motion={motion}>{children}</FrameXLetters>
+      </span>
+      <span
+        aria-hidden
+        className="pointer-events-none animate-framex-gloss-text [grid-area:1/1] motion-reduce:hidden"
+        style={{ ...glossText, ...delay(motion.splash + 0.35) }}
+      >
+        {children ?? (
+          <>
+            <span>FRAME</span>
+            <span>X</span>
+          </>
+        )}
+      </span>
+    </span>
+  )
+}
+
+function FrameXLetters({ motion, children }: { motion: Timeline; children: React.ReactNode }) {
   const id = React.useId()
   const { shine, flare, glow } = motion
   const ivory = filledText(`linear-gradient(${IVORY}, ${IVORY})`, Boolean(shine))
@@ -643,7 +751,7 @@ function Wordmark({
         className: cn(
           "flex items-center no-underline select-none",
           (motion.shine === "hover" || motion.flare === "hover") && "group/framex",
-          intro && "animate-framex-shake motion-reduce:animate-none",
+          intro && "relative animate-framex-shake motion-reduce:animate-none",
           className
         ),
         style: {
@@ -664,6 +772,7 @@ function Wordmark({
             >
               <FrameXName motion={motion}>{children}</FrameXName>
             </span>
+            {intro ? <FrameXDust hit={motion.pre + 0.73} /> : null}
           </>
         ),
       },

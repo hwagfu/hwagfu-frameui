@@ -27,7 +27,7 @@ const entranceProp = {
   name: "entrance",
   type: '"intro" | "reveal"',
   description:
-    "Chạy một lần khi logo xuất hiện. FrameON chỉ có `intro` (2,3 giây: góc khung vẽ ra, nút play đáp xuống, chữ trượt vào, ON bật sáng). FrameX: `reveal` (1,6 giây) hoặc `intro` — reveal sau 1,2 giây ánh sáng tụ lại, có cú nện: bùng sáng, sóng xung kích, rung nhẹ. Âm thanh: Logo Sound.",
+    "Chạy một lần khi logo xuất hiện. FrameON chỉ có `intro` (2,3 giây: góc khung vẽ ra, nút play đáp xuống, chữ trượt vào, ON bật sáng). FrameX: `reveal` (1,6 giây) hoặc `intro` — reveal sau 1,2 giây ánh sáng tụ lại, có cú nện: bùng sáng, sóng xung kích, rung nhẹ, rồi bụi vàng bay lên quanh logo; khi chữ vừa đứng yên (2,7 giây), một vệt sáng bóng như kim loại đánh bóng quét qua logo rồi chữ FRAMEX. Tất cả nằm trong logo nên có ở mọi nơi dùng intro (`LogoIntro`, `LogoSound` hay đứng một mình): ánh sáng là CSS, bụi vàng vẽ bằng một canvas nhỏ (component client duy nhất của logo) chạy cùng đồng hồ với CSS. Âm thanh: Logo Sound.",
 }
 
 const framexProps = [
