@@ -57,6 +57,8 @@ const twMerge = extendTailwindMerge({
         "framex-shake",
         "framex-gloss",
         "framex-gloss-text",
+        "framex-ember",
+        "framex-ember-glint",
       ],
     },
   },

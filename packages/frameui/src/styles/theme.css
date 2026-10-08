@@ -283,6 +283,46 @@
     }
   }
 
+  /*
+   * FrameX intro: one mote of gold dust (logo.tsx places and times each).
+   * It rises and fades in and out; its glow sways and twinkles.
+   */
+  @keyframes framex-ember {
+    0% {
+      opacity: 0;
+      translate: 0 0;
+    }
+    20% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 0.9;
+    }
+    80% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 0;
+      translate: var(--ember-to);
+    }
+  }
+  @keyframes framex-sway {
+    from {
+      translate: calc(var(--ember-swing) * -1) 0;
+    }
+    to {
+      translate: var(--ember-swing) 0;
+    }
+  }
+  @keyframes framex-twinkle {
+    from {
+      opacity: 0.1;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
   /* FrameX: the same band across the name — first background layer of the text. */
   @keyframes framex-sweep {
     0% {
@@ -566,6 +606,8 @@
   --animate-framex-shake: framex-shake 0.6s linear var(--logo-delay);
   --animate-framex-gloss: framex-gloss 0.8s cubic-bezier(0.45, 0, 0.3, 1) var(--logo-delay) both;
   --animate-framex-gloss-text: framex-gloss-text 1.2s cubic-bezier(0.4, 0, 0.25, 1) var(--logo-delay) both;
+  --animate-framex-ember: framex-ember var(--ember-life) linear var(--logo-delay) both;
+  --animate-framex-ember-glint: framex-sway var(--ember-sway) ease-in-out var(--logo-delay) var(--ember-swings) alternate both, framex-twinkle var(--ember-twinkle) ease-in-out var(--logo-delay) var(--ember-twinkles) alternate both;
 }
 
 /* ------------------------------------------------------------------ *

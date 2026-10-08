@@ -638,6 +638,111 @@ const glossText: React.CSSProperties = {
   filter: "drop-shadow(0 0 0.06em rgb(255 248 228 / 0.95)) drop-shadow(0 0 0.4em rgb(255 204 112 / 0.75))",
 }
 
+/** Seeded PRNG (mulberry32): the same dust on every render, server and client alike. */
+function seeded(seed: number) {
+  let s = seed | 0
+  return () => {
+    s = (s + 0x6d2b79f5) | 0
+    let t = Math.imul(s ^ (s >>> 15), 1 | s)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+/** Gold cooling from pale to deep: `heat` 0–1 → an rgb() colour. */
+function goldAt(heat: number) {
+  const stops = [
+    [255, 251, 238],
+    [255, 233, 170],
+    [246, 200, 96],
+    [219, 150, 48],
+  ] as const
+  const x = Math.max(0, Math.min(1, heat)) * (stops.length - 1)
+  const i = Math.min(stops.length - 2, Math.floor(x))
+  const [a, b] = [stops[i] ?? stops[0], stops[i + 1] ?? stops[0]]
+  return `rgb(${a.map((v, k) => Math.round(v + ((b[k] ?? v) - v) * (x - i))).join(" ")})`
+}
+
+/**
+ * The intro's gold dust: where each mote shows up around the lockup (x, y:
+ * -1…1 of its half-size, spread wider), when after the hit and for how long
+ * (s), how fast it rises and drifts (stage heights per second — the stage
+ * being about 5.4 lockups tall), how it sways and twinkles (Hz).
+ */
+const DUST = (() => {
+  const r = seeded(1930)
+  return Array.from({ length: 56 }, () => {
+    const born = 0.08 + 1.6 * Math.pow(r(), 1.5)
+    const mote = {
+      born,
+      life: Math.min(1.4 + 1.6 * r(), 4.2 - born),
+      x: r() * 2 - 1,
+      y: r() * 2 - 1,
+      rise: 0.015 + 0.045 * r(),
+      drift: (r() * 2 - 1) * 0.012,
+      sway: 0.6 + 0.8 * r(),
+      size: 0.6 + 1.4 * r(),
+      twinkle: 2 + 3 * r(),
+    }
+    r() // the twinkle's phase, which CSS starts at 0; drawn anyway to keep the sequence
+    return { ...mote, core: goldAt(0.12 + 0.3 * r()) }
+  })
+})()
+
+/**
+ * Gold dust drifting up around the FrameX lockup after the hit, swaying and
+ * twinkling, gone within 4.2 s. Plain CSS: each mote is placed, timed and
+ * tinted here, on the server; the keyframes only move it.
+ */
+function FrameXDust({ size, hit }: { size: number; hit: number }) {
+  const px = (v: number) => `${Math.round(v * 10) / 10}px`
+  const ms = (v: number) => `${Math.round(v * 1000)}ms`
+  // Tuned on a 56 px wordmark: lockup ≈ 69 px high, stage ≈ 5.4 lockups.
+  const stage = size * 1.24 * 5.4
+  return (
+    <span aria-hidden className="pointer-events-none absolute inset-0 mix-blend-screen motion-reduce:hidden">
+      {DUST.map((d, i) => {
+        const at = delay(hit + d.born)
+        const glow = (d.size * 10 * size) / 56
+        return (
+          <span
+            key={i}
+            className="absolute animate-framex-ember opacity-0"
+            style={
+              {
+                ...at,
+                left: `${(50 + d.x * 60).toFixed(1)}%`,
+                top: `${(50 + d.y * 90).toFixed(1)}%`,
+                "--ember-life": ms(d.life),
+                "--ember-to": `${px(d.drift * stage * d.life)} ${px(-d.rise * stage * d.life)}`,
+              } as React.CSSProperties
+            }
+          >
+            <span
+              className="block rounded-full animate-framex-ember-glint"
+              style={
+                {
+                  ...at,
+                  width: px(glow),
+                  height: px(glow),
+                  margin: px(-glow / 2),
+                  backgroundImage: `radial-gradient(closest-side, ${d.core} 10%, rgb(255 236 190 / 0.6) 16%, rgb(255 214 140 / 0.2) 42%, transparent)`,
+                  // Fractional counts, so the sway and twinkle end with the mote.
+                  "--ember-swing": px(0.006 * stage),
+                  "--ember-sway": ms(0.5 / d.sway),
+                  "--ember-swings": +(d.life * 2 * d.sway).toFixed(2),
+                  "--ember-twinkle": ms(0.5 / d.twinkle),
+                  "--ember-twinkles": +(d.life * 2 * d.twinkle).toFixed(2),
+                } as React.CSSProperties
+              }
+            />
+          </span>
+        )
+      })}
+    </span>
+  )
+}
+
 /** "FRAMEX": wide uppercase, ivory "FRAME" and a gold "X" that carries the last glint. */
 function FrameXName({ motion, children }: { motion: Timeline; children: React.ReactNode }) {
   if (motion.splash === null) return <FrameXLetters motion={motion}>{children}</FrameXLetters>
@@ -745,7 +850,7 @@ function Wordmark({
         className: cn(
           "flex items-center no-underline select-none",
           (motion.shine === "hover" || motion.flare === "hover") && "group/framex",
-          intro && "animate-framex-shake motion-reduce:animate-none",
+          intro && "relative animate-framex-shake motion-reduce:animate-none",
           className
         ),
         style: {
@@ -766,6 +871,7 @@ function Wordmark({
             >
               <FrameXName motion={motion}>{children}</FrameXName>
             </span>
+            {intro ? <FrameXDust size={size} hit={motion.pre + 0.73} /> : null}
           </>
         ),
       },
